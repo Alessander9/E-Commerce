@@ -1,0 +1,204 @@
+<div class="admin-panel-grid">
+  <!-- Left Column: Orders List requiring Shipment -->
+  <div class="admin-panel-card left-col">
+    <div class="panel-header">
+      <div class="header-desc">
+        <h3>Despacho (Chazki)</h3>
+        <p>Selecciona un pedido para gestionar su envío y registrar su número de tracking.</p>
+      </div>
+    </div>
+    
+    <div class="panel-body">
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nº Pedido</th>
+              <th>Total</th>
+              <th>Estado Pedido</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders" (click)="onSelectOrder(order)" class="clickable-row" [class.selected]="selectedOrder?.id === order.id">
+              <td><strong>{{ order.orderNumber }}</strong></td>
+              <td>S/ {{ order.total | number:'1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [class]="order.status.toLowerCase()">
+                  {{ order.status }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="orders.length === 0 && !isLoading && !loadError">
+              <td colspan="3" class="empty-table-cell">No se encontraron pedidos.</td>
+            </tr>
+            <tr *ngIf="isLoading">
+              <td colspan="3" class="loading-table-cell">
+                <div class="spinner"></div> Cargando...
+              </td>
+            </tr>
+            <tr *ngIf="loadError && !isLoading">
+              <td colspan="3" class="error-table-cell">
+                ⚠️ {{ loadError }}
+                <button (click)="loadOrders()" class="btn-retry">Reintentar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-footer" *ngIf="totalPages > 1">
+        <div class="pagination-btns">
+          <button [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)" class="btn-page">◀</button>
+          <span class="page-num">{{ currentPage + 1 }}/{{ totalPages }}</span>
+          <button [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)" class="btn-page">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Shipment details for selected Order -->
+  <div class="admin-panel-card right-col">
+    <div class="panel-header">
+      <h4>Detalles del Envío</h4>
+    </div>
+
+    <div class="panel-body">
+      <div *ngIf="!selectedOrder" class="no-selection-pane">
+        <p>Selecciona un pedido de la lista de la izquierda para ver o gestionar sus detalles de envío.</p>
+      </div>
+
+      <div *ngIf="selectedOrder">
+        <div class="order-overview">
+          <p><strong>Pedido Seleccionado:</strong> {{ selectedOrder.orderNumber }}</p>
+          <p><strong>Estado del Pedido:</strong> <span class="status-badge" [class]="selectedOrder.status.toLowerCase()">{{ selectedOrder.status }}</span></p>
+          <p><strong>Costo de Envío Pagado:</strong> S/ {{ selectedOrder.shippingCost | number:'1.2-2' }}</p>
+        </div>
+
+        <div *ngIf="isLoadingShipment" class="shipment-loading">
+          <div class="spinner"></div> Buscando información de envío...
+        </div>
+
+        <div *ngIf="!isLoadingShipment && !selectedShipment" class="no-shipment-pane">
+          <div class="alert alert-warning">
+            No se ha registrado ningún despacho para este pedido todavía.
+          </div>
+          <button (click)="openDispatchModal()" class="btn-primary-gold btn-large">
+            📦 Registrar Envío (Chazki)
+          </button>
+        </div>
+
+        <div *ngIf="!isLoadingShipment && selectedShipment" class="shipment-details-pane">
+          <div class="shipment-card">
+            <h5>Datos de Envío</h5>
+            <div class="shipment-grid">
+              <p><span>Courier:</span> <strong>{{ selectedShipment.courier }}</strong></p>
+              <p><span>Nº Tracking:</span> <strong>{{ selectedShipment.trackingCode }}</strong></p>
+              <p><span>Estado Envío:</span> <strong class="text-green">{{ getShipmentStatusLabel(selectedShipment.status) }}</strong></p>
+              <p><span>Costo Zona:</span> <strong>S/ {{ selectedShipment.shippingCost | number:'1.2-2' }}</strong></p>
+            </div>
+            
+            <button (click)="openTrackingModal()" class="btn-action-outline tracking-btn">
+              📍 Añadir Evento de Seguimiento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dispatch Modal -->
+<div class="admin-modal-backdrop" *ngIf="showDispatchModal">
+  <div class="admin-modal-card">
+    <div class="modal-header">
+      <h4>Registrar Despacho (Chazki / Courier)</h4>
+      <button (click)="closeDispatchModal()" class="btn-close-modal">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedOrder">
+      <p>Registra el envío para el pedido <strong>{{ selectedOrder.orderNumber }}</strong>.</p>
+      
+      <form [formGroup]="dispatchForm" (ngSubmit)="onDispatchSubmit()" class="modal-form">
+        <div class="form-group">
+          <label>Courier / Empresa de Envíos *</label>
+          <select formControlName="courier" class="input-large-select">
+            <option value="CHAZKI">CHAZKI</option>
+            <option value="SHALOM">SHALOM</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;" *ngIf="dispatchForm.get('courier')?.value === 'CHAZKI'">
+          <label>Servicio de Delivery Chazki *</label>
+          <select formControlName="deliveryService" class="input-large-select">
+            <option value="REGULAR">Regular (Next Day)</option>
+            <option value="EXPRESS">Express (3 horas)</option>
+            <option value="PROGRAMADO">Programado (Ventanas horarias)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;" *ngIf="dispatchForm.get('courier')?.value !== 'CHAZKI'">
+          <label>Código de Seguimiento (Guía de Remisión) *</label>
+          <input type="text" formControlName="trackingCode" placeholder="Ej. SHA-428901842">
+          <div class="error-msg" *ngIf="dispatchForm.get('trackingCode')?.touched && dispatchForm.get('trackingCode')?.invalid">
+            El número de tracking es obligatorio para envíos.
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;" *ngIf="dispatchForm.get('courier')?.value === 'CHAZKI'">
+          <label>Código de Seguimiento (Chazki)</label>
+          <input type="text" placeholder="Autogenerado automáticamente por API de Chazki" disabled style="background-color: #2a2a2a; border-color: #444; color: #888;">
+        </div>
+
+        <div class="modal-footer" style="margin-top: 24px;">
+          <button type="button" (click)="closeDispatchModal()" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit-gold">Confirmar Despacho</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add Tracking Event Modal -->
+<div class="admin-modal-backdrop" *ngIf="showTrackingModal">
+  <div class="admin-modal-card">
+    <div class="modal-header">
+      <h4>Nuevo Evento de Tracking</h4>
+      <button (click)="closeTrackingModal()" class="btn-close-modal">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedShipment">
+      <p>Añade un nuevo evento en tiempo real para el envío <strong>{{ selectedShipment.trackingCode }}</strong>.</p>
+      
+      <form [formGroup]="trackingForm" (ngSubmit)="onTrackingSubmit()" class="modal-form">
+        <div class="form-group">
+          <label>Estado del Envío *</label>
+          <select formControlName="status" class="input-large-select">
+            <option *ngFor="let s of trackingStatuses" [value]="s.value">
+              {{ s.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Ubicación actual *</label>
+          <input type="text" formControlName="location" placeholder="Ej. Agencia Shalom - La Molina">
+          <div class="error-msg" *ngIf="trackingForm.get('location')?.touched && trackingForm.get('location')?.invalid">
+            La ubicación es obligatoria.
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
+          <label>Descripción del Evento *</label>
+          <textarea formControlName="description" rows="3" placeholder="Ej. El paquete llegó a la agencia de destino y está listo para que el cliente lo retire."></textarea>
+          <div class="error-msg" *ngIf="trackingForm.get('description')?.touched && trackingForm.get('description')?.invalid">
+            La descripción es obligatoria.
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="closeTrackingModal()" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit-gold">Registrar Evento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

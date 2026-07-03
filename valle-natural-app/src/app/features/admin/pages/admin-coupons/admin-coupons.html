@@ -1,0 +1,144 @@
+<div class="admin-panel-card">
+  <div class="panel-header">
+    <div class="header-desc">
+      <h3>Cupones de Descuento</h3>
+      <p>Administra campañas promocionales, crea cupones de porcentaje o montos fijos.</p>
+    </div>
+    <button (click)="openCreate()" class="btn-primary-gold" *ngIf="!showForm">
+      + Crear Cupón
+    </button>
+  </div>
+
+  <!-- Table View -->
+  <div class="panel-body" *ngIf="!showForm">
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Valor Descuento</th>
+            <th>Mín. Compra</th>
+            <th>Usos</th>
+            <th>Vigencia</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let coup of coupons">
+            <td><code><strong>{{ coup.code }}</strong></code></td>
+            <td>{{ coup.discountType === 'PERCENTAGE' ? 'Porcentaje' : 'Monto Fijo' }}</td>
+            <td>
+              {{ coup.discountType === 'PERCENTAGE' ? (coup.discountValue + '%') : ('S/ ' + (coup.discountValue | number:'1.2-2')) }}
+            </td>
+            <td>S/ {{ (coup.minOrderAmount || 0) | number:'1.2-2' }}</td>
+            <td>{{ coup.usedCount || 0 }} / {{ coup.maxUses || '∞' }}</td>
+            <td>
+              <span class="expiry-text">
+                {{ coup.startDate | date:'dd/MM/yyyy' }} - {{ coup.endDate | date:'dd/MM/yyyy' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class.active]="coup.active" [class.inactive]="!coup.active">
+                {{ coup.active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button (click)="openEdit(coup)" class="btn-action-edit" title="Editar">
+                  ✏️
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="coupons.length === 0 && !isLoading && !loadError">
+            <td colspan="8" class="empty-table-cell">No se encontraron cupones de descuento.</td>
+          </tr>
+          <tr *ngIf="isLoading">
+            <td colspan="8" class="loading-table-cell">
+              <div class="spinner"></div> Cargando datos...
+            </td>
+          </tr>
+          <tr *ngIf="loadError && !isLoading">
+            <td colspan="8" class="error-table-cell">
+              ⚠️ {{ loadError }}
+              <button (click)="loadCoupons()" class="btn-retry">Reintentar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Form View -->
+  <div class="panel-body" *ngIf="showForm">
+    <div class="form-header-back">
+      <button (click)="closeForm()" class="btn-back">← Volver al listado</button>
+      <h4>{{ isEditing ? 'Editar Cupón' : 'Crear Nuevo Cupón' }}</h4>
+    </div>
+
+    <form [formGroup]="couponForm" (ngSubmit)="onSubmit()" class="organic-admin-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Código del Cupón *</label>
+          <input type="text" formControlName="code" placeholder="Ej. DIAPADRE10" style="text-transform: uppercase;">
+          <div class="error-msg" *ngIf="couponForm.get('code')?.touched && couponForm.get('code')?.hasError('required')">
+            El código es obligatorio.
+          </div>
+          <div class="error-msg" *ngIf="couponForm.get('code')?.touched && couponForm.get('code')?.hasError('pattern')">
+            El código solo puede contener letras mayúsculas, números, guiones y guiones bajos.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Descuento *</label>
+          <select formControlName="discountType">
+            <option value="PERCENTAGE">Porcentaje (%)</option>
+            <option value="FIXED_AMOUNT">Monto Fijo (S/)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Valor del Descuento *</label>
+          <input type="number" step="0.01" formControlName="discountValue" placeholder="10">
+          <div class="error-msg" *ngIf="couponForm.get('discountValue')?.touched && couponForm.get('discountValue')?.invalid">
+            Valor inválido.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Monto Mínimo de Pedido (S/) *</label>
+          <input type="number" step="0.01" formControlName="minOrderAmount" placeholder="50.00">
+        </div>
+
+        <div class="form-group">
+          <label>Límite de Usos Máximo *</label>
+          <input type="number" formControlName="maxUses" placeholder="100">
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de Inicio *</label>
+          <input type="date" formControlName="startDate">
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de Fin *</label>
+          <input type="date" formControlName="endDate">
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="active">
+            Cupón Habilitado / Activo
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions-row">
+        <button type="button" (click)="closeForm()" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit-gold">Guardar Cupón</button>
+      </div>
+    </form>
+  </div>
+</div>

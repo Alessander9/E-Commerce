@@ -1,0 +1,225 @@
+<div class="admin-panel-card">
+  <div class="panel-header">
+    <div class="header-desc">
+      <h3>Catálogo de Productos</h3>
+      <p>Administra los productos de ALLMARA SUPERFOODS, añade stock y actualiza precios.</p>
+    </div>
+    <button (click)="openCreate()" class="btn-primary-gold" *ngIf="!showForm">
+      + Nuevo Producto
+    </button>
+  </div>
+
+  <!-- Table View -->
+  <div class="panel-body" *ngIf="!showForm">
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Producto</th>
+            <th>SKU</th>
+            <th>Precio Actual</th>
+            <th>Acciones rápidas</th>
+            <th>Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prod of products">
+            <td>
+              <img [src]="prod.primaryImageUrl || 'assets/no-image.png'" alt="Producto" class="prod-thumb">
+            </td>
+            <td>
+              <div class="prod-info-cell">
+                <span class="prod-name">{{ prod.name }}</span>
+                <span class="prod-slug">{{ prod.slug }}</span>
+              </div>
+            </td>
+            <td><code>{{ prod.sku }}</code></td>
+            <td class="price-cell">S/ {{ prod.price | number:'1.2-2' }}</td>
+            <td>
+              <div class="quick-adjust-buttons">
+                <button (click)="openStockModal(prod)" class="btn-action-outline stock" title="Ajustar Stock">
+                  📦 Stock
+                </button>
+                <button (click)="openPriceModal(prod)" class="btn-action-outline price" title="Nuevo Precio">
+                  🏷️ Precio
+                </button>
+              </div>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button (click)="openEdit(prod)" class="btn-action-edit" title="Editar">
+                  ✏️
+                </button>
+                <button (click)="onDelete(prod)" class="btn-action-delete" title="Eliminar">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="products.length === 0 && !isLoading && !loadError">
+            <td colspan="6" class="empty-table-cell">No se encontraron productos.</td>
+          </tr>
+          <tr *ngIf="isLoading">
+            <td colspan="6" class="loading-table-cell">
+              <div class="spinner"></div> Cargando datos...
+            </td>
+          </tr>
+          <tr *ngIf="loadError && !isLoading">
+            <td colspan="6" class="error-table-cell">
+              ⚠️ {{ loadError }}
+              <button (click)="loadProducts()" class="btn-retry">Reintentar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-footer" *ngIf="totalPages > 1">
+      <span class="total-count">Total: {{ totalElements }} productos</span>
+      <div class="pagination-btns">
+        <button [disabled]="currentPage === 0" (click)="onPageChange(currentPage - 1)" class="btn-page">Anterior</button>
+        <span class="page-num">{{ currentPage + 1 }} / {{ totalPages }}</span>
+        <button [disabled]="currentPage === totalPages - 1" (click)="onPageChange(currentPage + 1)" class="btn-page">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form View -->
+  <div class="panel-body" *ngIf="showForm">
+    <div class="form-header-back">
+      <button (click)="closeForm()" class="btn-back">← Volver al listado</button>
+      <h4>{{ isEditing ? 'Editar Producto' : 'Crear Nuevo Producto' }}</h4>
+    </div>
+
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="organic-admin-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre del Producto *</label>
+          <input type="text" formControlName="name" placeholder="Ej. Polen Silvestre 250g">
+          <div class="error-msg" *ngIf="productForm.get('name')?.touched && productForm.get('name')?.invalid">
+            El nombre es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL) *</label>
+          <input type="text" formControlName="slug" placeholder="ej-polen-silvestre-250g">
+          <div class="error-msg" *ngIf="productForm.get('slug')?.touched && productForm.get('slug')?.invalid">
+            El slug es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>SKU *</label>
+          <input type="text" formControlName="sku" placeholder="POL-SIL-250">
+          <div class="error-msg" *ngIf="productForm.get('sku')?.touched && productForm.get('sku')?.invalid">
+            El SKU es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Peso (kg) *</label>
+          <input type="number" step="0.01" formControlName="weight" placeholder="0.25">
+        </div>
+
+        <div class="form-group">
+          <label>Alto (cm) *</label>
+          <input type="number" formControlName="height" placeholder="10">
+        </div>
+
+        <div class="form-group">
+          <label>Ancho (cm) *</label>
+          <input type="number" formControlName="width" placeholder="8">
+        </div>
+
+        <div class="form-group">
+          <label>Largo (cm) *</label>
+          <input type="number" formControlName="length" placeholder="8">
+        </div>
+
+        <div class="form-group" *ngIf="!isEditing">
+          <label>Precio Inicial (S/) *</label>
+          <input type="number" step="0.01" formControlName="price" placeholder="45.00">
+        </div>
+
+        <div class="form-group" *ngIf="!isEditing">
+          <label>Stock Disponible Inicial *</label>
+          <input type="number" formControlName="availableStock" placeholder="50">
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="active">
+            Producto Activo (Visible en tienda)
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>URLs de Imágenes (Separadas por coma)</label>
+        <textarea formControlName="imageUrls" rows="2" placeholder="https://ejemplo.com/imagen1.jpg, https://ejemplo.com/imagen2.jpg"></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Descripción Completa *</label>
+        <textarea formControlName="description" rows="4" placeholder="Detalles de la cosecha, beneficios..."></textarea>
+        <div class="error-msg" *ngIf="productForm.get('description')?.touched && productForm.get('description')?.invalid">
+          La descripción es obligatoria.
+        </div>
+      </div>
+
+      <div class="form-actions-row">
+        <button type="button" (click)="closeForm()" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit-gold">Guardar Producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div class="admin-modal-backdrop" *ngIf="showStockModal">
+  <div class="admin-modal-card">
+    <div class="modal-header">
+      <h4>Ajustar Inventario</h4>
+      <button (click)="closeStockModal()" class="btn-close-modal">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedProduct">
+      <p>Estás ajustando el stock disponible del producto: <strong>{{ selectedProduct.name }}</strong></p>
+      <form [formGroup]="stockForm" (ngSubmit)="onUpdateStock()" class="modal-form">
+        <div class="form-group">
+          <label>Nuevo Stock Disponible</label>
+          <input type="number" formControlName="availableStock" class="input-large">
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="closeStockModal()" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit-gold">Actualizar Stock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Price Change Modal -->
+<div class="admin-modal-backdrop" *ngIf="showPriceModal">
+  <div class="admin-modal-card">
+    <div class="modal-header">
+      <h4>Registrar Nuevo Precio</h4>
+      <button (click)="closePriceModal()" class="btn-close-modal">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedProduct">
+      <p>Registra un nuevo precio para el producto: <strong>{{ selectedProduct.name }}</strong>. Se guardará en el historial de precios.</p>
+      <form [formGroup]="priceForm" (ngSubmit)="onAddPrice()" class="modal-form">
+        <div class="form-group">
+          <label>Nuevo Precio (S/)</label>
+          <input type="number" step="0.01" formControlName="price" class="input-large">
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="closePriceModal()" class="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit-gold">Actualizar Precio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

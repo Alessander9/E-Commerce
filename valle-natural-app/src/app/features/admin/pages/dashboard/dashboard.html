@@ -1,0 +1,278 @@
+<div class="admin-layout">
+  
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <img src="/logo-flecha.png" alt="ALLMARA Logo" class="sidebar-logo-img" />
+      <div class="header-text">
+        <h3>ALLMARA</h3>
+        <span>Panel Admin</span>
+      </div>
+      <button (click)="toggleSidebar()" class="sidebar-collapse-btn" title="Ocultar menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/admin" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+        Resumen
+      </a>
+      
+      <a routerLink="/admin/products" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        Productos
+      </a>
+
+      <a routerLink="/admin/categories" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        Categorías
+      </a>
+
+      <a routerLink="/admin/orders" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        Pedidos
+      </a>
+
+      <a routerLink="/admin/shipments" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        Despacho (Shalom)
+      </a>
+
+      <a routerLink="/admin/coupons" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        Cupones
+      </a>
+
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Usuarios
+      </a>
+
+      <a routerLink="/admin/audit" routerLinkActive="active" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Auditoría
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="back-shop-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="foot-icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Volver a la Tienda
+      </a>
+      <button (click)="onLogout()" class="sidebar-logout-btn">
+        Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="admin-main-wrapper" [class.expanded]="isSidebarCollapsed">
+    
+    <!-- Top Header -->
+    <header class="admin-top-header">
+      <div class="header-title-section">
+        @if (isSidebarCollapsed) {
+          <button (click)="toggleSidebar()" class="sidebar-expand-btn" title="Mostrar menú">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+          </button>
+        }
+        <h2>Panel de Control</h2>
+      </div>
+      
+      <div class="admin-profile-badge">
+        @if (authService.currentUser(); as admin) {
+          <div class="admin-avatar">
+            {{ admin.firstName.charAt(0) }}{{ admin.lastName.charAt(0) }}
+          </div>
+          <div class="admin-info">
+            <p class="admin-name">{{ admin.firstName }}</p>
+            <span>Administrador</span>
+          </div>
+        }
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="admin-content-pane">
+      @if (isRootAdmin) {
+        
+        <!-- Welcome Root Admin Panel -->
+        <div class="welcome-panel">
+          <div class="welcome-header">
+            <h1>Bienvenido al Centro de Control</h1>
+            <p>Monitorea y gestiona las operaciones de <strong>ALLMARA SUPERFOODS</strong> en tiempo real.</p>
+          </div>
+
+          <!-- Error Banner -->
+          @if (loadError) {
+            <div class="dashboard-error-banner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="error-icon"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <div class="error-text">
+                <h4>Advertencia de Conexión</h4>
+                <p>{{ loadError }} Por favor, refresca la página o vuelve a iniciar sesión como administrador.</p>
+              </div>
+            </div>
+          }
+
+          <!-- Loader -->
+          @if (isLoading) {
+            <div class="dashboard-loader">
+              <div class="spinner"></div>
+              <p>Cargando métricas del sistema...</p>
+            </div>
+          } @else {
+            <!-- Stats Grid -->
+            <div class="stats-cards-grid">
+              
+              <div class="stat-card">
+                <div class="stat-icon-box sales">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
+                <div class="stat-text-box">
+                  <span class="stat-lbl">Ventas Totales</span>
+                  <h3>S/ {{ totalSales | number:'1.2-2' }}</h3>
+                  <span class="stat-trend up">Excluye cancelados</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-box orders">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                </div>
+                <div class="stat-text-box">
+                  <span class="stat-lbl">Pedidos Totales</span>
+                  <h3>{{ totalOrders }}</h3>
+                  <span class="stat-trend pending" [class.has-pending]="pendingOrdersCount > 0">
+                    {{ pendingOrdersCount }} pendientes de pago
+                  </span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-box users">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="stat-text-box">
+                  <span class="stat-lbl">Clientes</span>
+                  <h3>{{ totalClients }}</h3>
+                  <span class="stat-trend up">Cuentas activas</span>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon-box products-stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                </div>
+                <div class="stat-text-box">
+                  <span class="stat-lbl">Productos en Catálogo</span>
+                  <h3>{{ totalProducts }}</h3>
+                  <span class="stat-trend coupons-info">{{ activeCouponsCount }} cupones activos</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Dashboard Split Layout -->
+            <div class="dashboard-grid-row">
+              
+              <!-- Recent Orders -->
+              <div class="recent-orders-card card">
+                <div class="card-header-row">
+                  <h3>Pedidos Recientes</h3>
+                  <a routerLink="/admin/orders" class="view-all-link">Ver todo</a>
+                </div>
+                
+                <div class="table-responsive">
+                  <table class="recent-orders-table">
+                    <thead>
+                      <tr>
+                        <th>N° Pedido</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (order of recentOrders; track order.id) {
+                        <tr>
+                          <td class="order-num">{{ order.orderNumber }}</td>
+                          <td class="order-date">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                          <td class="order-total">S/ {{ order.total | number:'1.2-2' }}</td>
+                          <td>
+                            <span class="status-badge {{ order.status.toLowerCase() }}">
+                              {{ getStatusLabel(order.status) }}
+                            </span>
+                          </td>
+                          <td>
+                            <a routerLink="/admin/orders" class="action-btn-link">Gestionar</a>
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="5" class="empty-table-msg">No se encontraron pedidos recientes.</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Quick Operations Widget -->
+              <div class="right-column-widgets">
+                <div class="shortcuts-box-widget card">
+                  <h3>Operaciones Rápidas</h3>
+                  <div class="shortcuts-list">
+                    <a routerLink="/admin/products" class="shortcut-widget-item">
+                      <div class="widget-icon products">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                      </div>
+                      <div class="widget-text">
+                        <h4>Gestionar Productos</h4>
+                        <p>Agregar, editar stock y precios</p>
+                      </div>
+                    </a>
+                    <a routerLink="/admin/coupons" class="shortcut-widget-item">
+                      <div class="widget-icon coupons">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                      </div>
+                      <div class="widget-text">
+                        <h4>Crear Cupones</h4>
+                        <p>Descuentos y límites de compra</p>
+                      </div>
+                    </a>
+                    <a routerLink="/admin/shipments" class="shortcut-widget-item">
+                      <div class="widget-icon shipments">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                      </div>
+                      <div class="widget-text">
+                        <h4>Despacho de Envíos</h4>
+                        <p>Ingresar guías Shalom</p>
+                      </div>
+                    </a>
+                    <a routerLink="/admin/audit" class="shortcut-widget-item">
+                      <div class="widget-icon audit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                      </div>
+                      <div class="widget-text">
+                        <h4>Logs de Auditoría</h4>
+                        <p>Ver bitácora de cambios</p>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+
+      } @else {
+        <!-- Nested Sub-Pages -->
+        <router-outlet></router-outlet>
+      }
+    </main>
+
+  </div>
+</div>

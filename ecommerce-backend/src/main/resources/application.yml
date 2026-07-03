@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: ecommerce-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ecommerce_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:cleo2026}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_batch_fetch_size: 20
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: /
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USER:test@gmail.com}
+    password: ${MAIL_PASSWORD:test}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXZlcnktc2VjdXJlLWFuZC1sb25nLXNlY3JldC1rZXktZm9yLWp3dC10b2tlbi1nZW5lcmF0aW9uLXdpdGgtbWluaW11bS0yNTYtYml0cw==}
+    access-token-expiration: 900000
+    refresh-token-expiration: 604800000
+
+  culqi:
+    secret-key: ${CULQI_SECRET_KEY:sk_test_12345}
+    public-key: ${CULQI_PUBLIC_KEY:pk_test_12345}
+    base-url: https://api.culqi.com/v2
+
+  chazki:
+    base-url: ${CHAZKI_API_URL:https://api.chazki.com}
+    enterprise-key: ${CHAZKI_ENTERPRISE_KEY:chazki_test_key}
+    pickup-address: ${CHAZKI_PICKUP_ADDRESS:Av. Principal 123, Surquillo, Lima}
+    pickup-landmark: ${CHAZKI_PICKUP_LANDMARK:Frente al parque principal}
+    pickup-contact: ${CHAZKI_PICKUP_CONTACT:Valle Natural Almacén}
+    pickup-phone: ${CHAZKI_PICKUP_PHONE:999888777}
+
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:4200}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1

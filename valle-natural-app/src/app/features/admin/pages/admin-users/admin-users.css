@@ -1,0 +1,172 @@
+/* C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\E-Commerce\valle-natural-app\src\app\features\admin\pages\admin-users\admin-users.css */
+
+.admin-panel-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fcfbf7;
+}
+
+.header-desc h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  color: #1c3d2c;
+  font-weight: 700;
+}
+
+.header-desc p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.panel-body {
+  padding: 32px;
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  padding: 16px;
+  border-bottom: 2px solid #edf2f7;
+  color: #2e5a44;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-table td {
+  padding: 16px;
+  border-bottom: 1px solid #edf2f7;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: #2d3748;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge.active {
+  background-color: #e6fffa;
+  color: #00a389;
+}
+
+.badge.inactive {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
+
+.btn-toggle-status {
+  padding: 6px 12px;
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+  background-color: transparent;
+}
+
+.btn-toggle-status.deactivate {
+  border: 1px solid #cbd5e0;
+  color: #e53e3e;
+}
+
+.btn-toggle-status.deactivate:hover {
+  background-color: #fff5f5;
+  border-color: #e53e3e;
+}
+
+.btn-toggle-status.activate {
+  border: 1px solid #cbd5e0;
+  color: #38a169;
+}
+
+.btn-toggle-status.activate:hover {
+  background-color: #f0fff4;
+  border-color: #38a169;
+}
+
+.empty-table-cell, .loading-table-cell {
+  text-align: center;
+  padding: 40px !important;
+  color: #718096;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-table-cell {
+  text-align: center;
+  padding: 28px 16px;
+  color: #b91c1c;
+  background: #fef2f2;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-retry {
+  margin-left: 12px;
+  padding: 5px 14px;
+  border: 1px solid #b91c1c;
+  border-radius: 6px;
+  background: transparent;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-retry:hover {
+  background: #b91c1c;
+  color: #fff;
+}

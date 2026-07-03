@@ -1,0 +1,121 @@
+<div class="admin-panel-card">
+  <div class="panel-header">
+    <div class="header-desc">
+      <h3>Gestión de Categorías</h3>
+      <p>Organiza la jerarquía de categorías de ALLMARA SUPERFOODS para agrupar tus productos.</p>
+    </div>
+    <button (click)="openCreate()" class="btn-primary-gold" *ngIf="!showForm">
+      + Nueva Categoría
+    </button>
+  </div>
+
+  <!-- Table View -->
+  <div class="panel-body" *ngIf="!showForm">
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Slug</th>
+            <th>Categoría Padre</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cat of categories">
+            <td><code>#{{ cat.id }}</code></td>
+            <td><strong>{{ cat.name }}</strong></td>
+            <td><code>{{ cat.slug }}</code></td>
+            <td>{{ getCategoryName(cat.parentId) }}</td>
+            <td>
+              <span class="badge" [class.active]="cat.active" [class.inactive]="!cat.active">
+                {{ cat.active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button (click)="openEdit(cat)" class="btn-action-edit" title="Editar">
+                  ✏️
+                </button>
+                <button (click)="onDelete(cat)" class="btn-action-delete" title="Eliminar">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="categories.length === 0 && !isLoading && !loadError">
+            <td colspan="6" class="empty-table-cell">No se encontraron categorías.</td>
+          </tr>
+          <tr *ngIf="isLoading">
+            <td colspan="6" class="loading-table-cell">
+              <div class="spinner"></div> Cargando datos...
+            </td>
+          </tr>
+          <tr *ngIf="loadError && !isLoading">
+            <td colspan="6" class="error-table-cell">
+              ⚠️ {{ loadError }}
+              <button (click)="loadCategories()" class="btn-retry">Reintentar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Form View -->
+  <div class="panel-body" *ngIf="showForm">
+    <div class="form-header-back">
+      <button (click)="closeForm()" class="btn-back">← Volver al listado</button>
+      <h4>{{ isEditing ? 'Editar Categoría' : 'Crear Nueva Categoría' }}</h4>
+    </div>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="organic-admin-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre de Categoría *</label>
+          <input type="text" formControlName="name" placeholder="Ej. Frutos Secos">
+          <div class="error-msg" *ngIf="categoryForm.get('name')?.touched && categoryForm.get('name')?.invalid">
+            El nombre es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Slug (URL) *</label>
+          <input type="text" formControlName="slug" placeholder="frutos-secos">
+          <div class="error-msg" *ngIf="categoryForm.get('slug')?.touched && categoryForm.get('slug')?.invalid">
+            El slug es obligatorio.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría Padre (Jerarquía)</label>
+          <select formControlName="parentId">
+            <option [value]="null">Ninguna (Categoría Raíz)</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="active">
+            Categoría Activa (Visible en catálogo)
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Descripción</label>
+        <textarea formControlName="description" rows="3" placeholder="Breve detalle sobre los tipos de productos en esta categoría..."></textarea>
+      </div>
+
+      <div class="form-actions-row">
+        <button type="button" (click)="closeForm()" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit-gold">Guardar Categoría</button>
+      </div>
+    </form>
+  </div>
+</div>

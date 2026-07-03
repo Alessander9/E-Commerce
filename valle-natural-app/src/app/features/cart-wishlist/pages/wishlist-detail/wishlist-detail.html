@@ -1,0 +1,33 @@
+<div class="container wishlist-page-container">
+  <h1 class="wishlist-title">Mi Lista de Deseos</h1>
+
+  @if (isDataLoading()) {
+    <div class="wishlist-loader">
+      <span class="spinner green-spinner"></span>
+      <p>Cargando tus favoritos...</p>
+    </div>
+  } @else {
+    
+    @if (products().length === 0) {
+      <!-- Empty Wishlist -->
+      <div class="empty-wishlist-container">
+        <div class="empty-wishlist-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="empty-wishlist-icon">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </div>
+        <h2>Tu lista de deseos está vacía</h2>
+        <p>Guarda tus productos favoritos para comprarlos más tarde.</p>
+        <a routerLink="/" class="btn btn-primary explore-btn">Explorar Productos</a>
+      </div>
+    } @else {
+      <!-- Wishlist Grid -->
+      <div class="product-grid">
+        @for (prod of products(); track prod.id) {
+          <app-product-card [product]="prod"></app-product-card>
+        }
+      </div>
+    }
+
+  }
+</div>

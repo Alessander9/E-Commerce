@@ -1,0 +1,164 @@
+<div class="auth-page-container">
+  <div class="auth-card">
+    
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="logo-wrapper">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2C6.5 2 2 6.5 2 12c0 3.5 1.8 6.6 4.5 8.5.5.3 1.1-.1 1.1-.7v-2.3c0-.6.4-1.1 1-1.2 3.3-.4 6-3.1 6.4-6.4.1-.6.6-1 1.2-1h2.3c.6 0 1-.6.7-1.1C18.6 3.8 15.5 2 12 2z"/>
+          <path d="M12 22c5.5 0 10-4.5 10-10 0-3.5-1.8-6.6-4.5-8.5-.5-.3-1.1.1-1.1.7v2.3c0 .6-.4 1.1-1 1.2-3.3.4-6 3.1-6.4 6.4-.1.6-.6 1-1.2 1H5.3c-.6 0-1 .6-.7 1.1 1.1 4 4.2 5.8 7.4 5.8z"/>
+        </svg>
+      </div>
+      <h2 class="auth-title">Crea tu cuenta</h2>
+      <p class="auth-subtitle">Regístrate para comprar alimentos saludables y orgánicos.</p>
+    </div>
+
+    <!-- Error Alert -->
+    @if (errorMessage(); as error) {
+      <div class="alert alert-danger" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="alert-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ error }}</span>
+      </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="registerForm" (submit)="onSubmit()" class="auth-form">
+      
+      <!-- Name Grid -->
+      <div class="form-row-grid">
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="firstName" class="form-label">Nombre</label>
+          <input 
+            type="text" 
+            id="firstName" 
+            formControlName="firstName" 
+            placeholder="Juan"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid"
+          />
+          @if (registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid) {
+            <div class="field-error">Requerido.</div>
+          }
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName" class="form-label">Apellido</label>
+          <input 
+            type="text" 
+            id="lastName" 
+            formControlName="lastName" 
+            placeholder="Pérez"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid"
+          />
+          @if (registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid) {
+            <div class="field-error">Requerido.</div>
+          }
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Correo Electrónico</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="juan.perez&#64;correo.com"
+          class="form-control"
+          [class.is-invalid]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid"
+        />
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+          <div class="field-error">
+            @if (registerForm.get('email')?.hasError('required')) {
+              El correo es requerido.
+            } @else if (registerForm.get('email')?.hasError('email')) {
+              Ingresa un correo válido.
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Phone Field -->
+      <div class="form-group">
+        <label for="phone" class="form-label">Teléfono / Celular (Opcional)</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          formControlName="phone" 
+          placeholder="999888777"
+          class="form-control"
+        />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="form-label">Contraseña</label>
+        <div class="input-wrapper">
+          <input 
+            [type]="showPassword() ? 'text' : 'password'" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Mínimo 6 caracteres"
+            class="form-control password-input"
+            [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid"
+          />
+          <button 
+            type="button" 
+            class="password-toggle" 
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            @if (showPassword()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="eye-icon">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="eye-icon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            }
+          </button>
+        </div>
+        @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+          <div class="field-error">
+            @if (registerForm.get('password')?.hasError('required')) {
+              La contraseña es requerida.
+            } @else if (registerForm.get('password')?.hasError('minlength')) {
+              Debe tener al menos 6 caracteres.
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Submit -->
+      <button 
+        type="submit" 
+        class="btn btn-primary submit-btn" 
+        [disabled]="isSubmitting() || registerForm.invalid"
+      >
+        @if (isSubmitting()) {
+          <span class="spinner"></span> Registrando...
+        } @else {
+          Crear Cuenta
+        }
+      </button>
+
+      <!-- Switch -->
+      <div class="auth-switch">
+        <span>¿Ya tienes una cuenta?</span>
+        <a routerLink="/login" class="switch-link">Inicia sesión</a>
+      </div>
+
+    </form>
+
+  </div>
+</div>

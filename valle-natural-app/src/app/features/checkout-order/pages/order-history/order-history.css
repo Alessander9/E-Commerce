@@ -1,0 +1,210 @@
+/* C:\Users\Alessander\Desktop\TRABAJOS\ACTUALES\E-Commerce\valle-natural-app\src\app\features\checkout-order\pages\order-history\order-history.css */
+
+.history-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.history-header {
+  margin-bottom: 32px;
+}
+
+.history-header h2 {
+  font-size: 2rem;
+  color: #1c3d2c;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.history-header p {
+  margin: 0;
+  color: #718096;
+}
+
+/* Loading & Empty State */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #edf2f7;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  color: #2e5a44;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #718096;
+  margin: 0 0 24px 0;
+  font-size: 0.95rem;
+}
+
+.btn-shop {
+  display: inline-block;
+  background-color: #2e5a44;
+  color: #ffffff;
+  padding: 12px 28px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-shop:hover {
+  background-color: #1c3d2c;
+}
+
+/* Orders List */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #edf2f7;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  background-color: #fcfbf7;
+  padding: 16px 24px;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-num {
+  font-weight: 700;
+  color: #1c3d2c;
+  font-size: 1.05rem;
+}
+
+.order-date {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.pending {
+  background-color: #fffaf0;
+  color: #dd6b20;
+}
+
+.status-badge.paid {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.status-badge.shipped {
+  background-color: #f0f4ff;
+  color: #5a67d8;
+}
+
+.status-badge.delivered {
+  background-color: #e6fffa;
+  color: #00a389;
+}
+
+.status-badge.cancelled {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
+
+/* Card Body */
+.card-body {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-total {
+  font-size: 0.95rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.order-total span {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1c3d2c;
+  margin-left: 6px;
+}
+
+.btn-detail {
+  display: inline-block;
+  color: #d4af37;
+  background-color: transparent;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.btn-detail:hover {
+  color: #c59f2e;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #2e5a44;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .btn-detail {
+    width: 100%;
+    text-align: right;
+  }
+}

@@ -1,0 +1,76 @@
+<div class="detail-container" *ngIf="order">
+  <div class="detail-header-row">
+    <a routerLink="/orders" class="btn-back">← Volver a mis pedidos</a>
+    <h2>Pedido #{{ order.orderNumber }}</h2>
+    <span class="status-badge" [class]="order.status.toLowerCase()">
+      {{ getStatusLabel(order.status) }}
+    </span>
+  </div>
+
+  <div class="detail-grid">
+    <!-- Items & Summary Column -->
+    <div class="summary-col">
+      <div class="card item-list-card">
+        <h3>Productos Comprados</h3>
+        <div class="item-row" *ngFor="let item of order.items">
+          <div class="item-name-qty">
+            <span class="item-name">{{ item.productName }}</span>
+            <span class="item-qty">Cantidad: {{ item.quantity }}</span>
+          </div>
+          <span class="item-subtotal">S/ {{ item.subtotal | number:'1.2-2' }}</span>
+        </div>
+
+        <div class="totals-block">
+          <div class="total-line">
+            <span>Subtotal:</span>
+            <span>S/ {{ order.subtotal | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-line">
+            <span>Costo de Envío (Chazki):</span>
+            <span>S/ {{ order.shippingCost | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-line discount" *ngIf="order.discountAmount > 0">
+            <span>Descuento Promocional:</span>
+            <span>- S/ {{ order.discountAmount | number:'1.2-2' }}</span>
+          </div>
+          <div class="total-line final">
+            <span>Total Cancelado:</span>
+            <span>S/ {{ order.total | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking Timeline Column -->
+    <div class="tracking-col">
+      <div class="card tracking-card">
+        <h3>Seguimiento en Tiempo Real (Chazki)</h3>
+        
+        <div *ngIf="trackingEvents.length === 0" class="no-tracking">
+          <p>Tu pedido está en proceso de confirmación de pago. Una vez que validemos tu pago vía Culqi, procederemos al despacho y podrás ver el tracking en tiempo real aquí.</p>
+        </div>
+
+        <div *ngIf="trackingEvents.length > 0" class="timeline">
+          <div class="timeline-item" *ngFor="let event of trackingEvents; let last = last" [class.latest]="last">
+            <div class="timeline-marker">
+              <div class="marker-dot"></div>
+              <div class="marker-line" *ngIf="!last"></div>
+            </div>
+            <div class="timeline-content">
+              <div class="event-meta">
+                <span class="event-status">{{ getTrackingStatusLabel(event.status) }}</span>
+                <span class="event-time">{{ event.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <p class="event-location" *ngIf="event.location">📍 {{ event.location }}</p>
+              <p class="event-desc">{{ event.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="loading-state-details">
+  <div class="spinner"></div> Cargando detalles del pedido...
+</div>
