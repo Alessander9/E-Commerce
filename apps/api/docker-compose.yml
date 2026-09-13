@@ -1,0 +1,116 @@
+# ==========================================
+# 🐳 Docker Compose — Cleo Platform
+# ==========================================
+# Full production stack: API + PostgreSQL + Redis + Nginx
+
+version: '3.8'
+
+services:
+  # ── PostgreSQL Database ──
+  postgres:
+    image: postgres:16-alpine
+    container_name: cleo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cleo_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-cleo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cleo_secret_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cleo} -d ${POSTGRES_DB:-cleo_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cleo-network
+
+  # ── Redis Cache ──
+  redis:
+    image: redis:7-alpine
+    container_name: cleo-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cleo-network
+
+  # ── NestJS API ──
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cleo-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-cleo}:${POSTGRES_PASSWORD:-cleo_secret_password}@postgres:5432/${POSTGRES_DB:-cleo_platform}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - cleo-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Nginx Reverse Proxy ──
+  nginx:
+    image: nginx:alpine
+    container_name: cleo-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - api
+    networks:
+      - cleo-network
+
+  # ── Certbot (SSL) ──
+  certbot:
+    image: certbot/certbot
+    container_name: cleo-certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - cleo-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  cleo-network:
+    driver: bridge

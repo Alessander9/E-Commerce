@@ -1,329 +1,94 @@
-# Contexto del sistema
+# Contexto del Sistema — PeruCat (Cleo Platform)
 
-Repositorio e-commerce compuesto por dos aplicaciones principales:
+Repositorio e-commerce SaaS multi-tenant compuesto por dos aplicaciones principales en monorepo:
 
-- `ecommerce-backend`: backend Java 21 con Spring Boot, Spring Security, JWT, PostgreSQL, RabbitMQ, Culqi y módulo de envíos.
-- `valle-natural-app`: frontend Angular 22 con Standalone Components.
+- `apps/api`: backend NestJS 10 con TypeScript, Prisma 6, PostgreSQL 18, JWT, Culqi y arquitectura multi-tenant.
+- `apps/web`: frontend React 19 con TypeScript, Vite, Tailwind CSS y componentes animados.
 
-Este archivo resume el estado real del sistema para usarlo como referencia operativa.
+**Tenant Insignia Actual:** **PeruCat** (Arenas Sanitarias & Cuidado Felino).
 
-## Visión general
+---
 
-La solución ya cubre la mayor parte de un e-commerce funcional:
+## 🐾 Identidad y Temática Oficial: PeruCat
 
-- autenticación y perfil de usuario
-- catálogo de productos y categorías
-- carrito y wishlist
-- checkout, pedido e historial
-- pagos con Culqi
-- cálculo de envíos
-- administración de catálogo, pedidos, usuarios, cupones y auditoría
-- tracking y webhooks de envío
-- páginas legales y SEO por ruta
+### Slogan Principal
+> **Una nueva forma de cuidar su mundo.**  
+> La arena sanitaria que combina absorción, aglomeración y control de olores para hacer más fácil la vida junto a tu gato.  
+> **Limpieza para ellos. Tranquilidad para ti.**
 
-## Arquitectura real
+---
 
-### Backend
+## 📖 Estructura Narrativa y Secciones del E-Commerce
 
-El backend expone la API bajo el prefijo global `/api/v1` gracias a `server.servlet.context-path`.
+### 1. Todo empieza con un arenero limpio
+Tu gato merece un espacio cómodo, limpio y agradable todos los días. PeruCat está pensada para ayudarte a mantener el arenero en mejores condiciones, facilitando la limpieza y ayudando a controlar los olores de manera práctica.
 
-La aplicación incluye estos dominios principales:
+### 2. Hecha para facilitar tu día (4 Pilares Funcionales)
+- **Alta absorción:** Ayuda a absorber rápidamente la humedad para mantener el arenero más limpio y seco.
+- **Aglomeración práctica:** Forma grumos que facilitan la separación de los residuos y permiten una limpieza más sencilla.
+- **Control de olores:** Ayuda a encapsular los malos olores para mantener un ambiente más agradable.
+- **Más practicidad:** Limpia, retira y repone de manera sencilla para dedicar menos tiempo al mantenimiento del arenero.
 
-- `security`: login, registro, refresh token, logout, JWT, usuarios y roles
-- `catalog`: productos, categorías, inventario, historial de precios e imágenes
-- `cart`: carrito de compra por usuario
-- `wishlist`: lista de favoritos
-- `order`: creación de pedidos, consulta de historial y tracking
-- `payment`: integración con Culqi
-- `shipping`: tarifas, zonas, despachos y webhook de Chazki/Shalom según el caso del dominio
-- `coupon`: validación y administración de cupones
-- `audit`: bitácora de eventos administrativos
-- `notification`: envío de correos y mensajería interna
+### 3. Menos olor. Más tranquilidad.
+La rutina con tu gato debería ser sencilla. PeruCat ayuda a controlar los olores asociados a la humedad y los residuos, para que puedas disfrutar de un hogar más fresco y agradable.  
+*Porque compartir tu hogar con un gato también significa disfrutarlo.*
 
-La implementación real ya fue alineada con parte del plan documentado:
+### 4. Una arena pensada para tu gato
+Cada gato tiene su propia personalidad, pero todos necesitan un espacio limpio para sentirse cómodos. PeruCat te ayuda a mantener su arenero limpio y preparado para todos los días.  
+*Más limpieza. Más comodidad. Más bienestar.*
 
-- recuperación completa de contraseña
-- endpoint de productos por categoría
-- eliminación explícita de ítem de carrito
-- consulta de pago por pedido
-- capa `NotificationService` explícita
-- plantillas HTML reales para correos
+### 5. Conoce nuestras arenas (Catálogo y Presentaciones)
+Descubre nuestras diferentes presentaciones y elige la opción que mejor se adapte a tu gato y a tu hogar. Desde opciones para el día a día hasta alternativas pensadas para quienes buscan mayor practicidad y rendimiento.  
+*Encuentra tu PeruCat ideal.*
 
-### Frontend
+### 6. Una marca con experiencia, ahora con una nueva identidad
+PeruCat representa una nueva etapa en nuestra propuesta de arenas sanitarias para mascotas. Nacemos con el compromiso de ofrecer productos prácticos, confiables y pensados para las necesidades reales de quienes comparten su vida con gatos.  
+*Experiencia que evoluciona. Una nueva identidad. El mismo compromiso con la calidad.*
 
-El frontend está organizado por features y ya tiene estas áreas reales:
+### 7. Calidad que se nota en cada grano
+Seleccionamos y desarrollamos nuestras arenas pensando en algo muy simple: que funcionen bien en tu día a día. Absorción, aglomeración y control de olores se unen para ofrecer una experiencia de limpieza más práctica y conveniente.
 
-- `core`: auth, interceptor JWT, guards y servicios centrales
-- `shared`: modelos, componentes reutilizables y pipe de moneda
-- `features/catalog`: home, listado de productos y detalle
-- `features/auth`: login, registro y recuperación de contraseña
-- `features/cart-wishlist`: carrito y wishlist
-- `features/checkout-order`: checkout, pago, historial y detalle de pedido
-- `features/admin`: dashboard y CRUDs administrativos
-- `features/static-pages`: páginas legales o informativas
+### 8. Para ellos. Para ti. Para su hogar.
+Porque cuidar a tu gato también es cuidar el espacio que comparten. PeruCat está creada para acompañarte en esos pequeños momentos que forman parte de la convivencia con tu mascota.  
+*Tu gato merece lo mejor. Tu hogar también.*
 
-El front también fue mejorado con:
+### 9. ¿Por qué elegir PeruCat?
+- Porque buscamos que cada limpieza sea más sencilla.
+- Porque sabemos que el control de olores importa.
+- Porque una buena arena debe ofrecer rendimiento y practicidad.
+- Y porque detrás de cada producto hay una familia que quiere lo mejor para su mascota.  
+*PeruCat. Hecha para vivir juntos.*
 
-- pantalla de carga premium con logo
-- header más limpio y funcional
-- footer más consistente
-- home con microinteracciones y mejor jerarquía visual
-- checkout sin fallback demo y con Culqi configurado desde metadata
+### 10. Consejos para una mejor experiencia (Guía de Cuidado)
+- **Mantén una buena cantidad de arena:** Asegúrate de mantener un nivel adecuado (5 a 7 cm) para favorecer la absorción y la formación de grumos.
+- **Retira los residuos con frecuencia:** Una limpieza frecuente ayuda a mantener el arenero más agradable para tu gato.
+- **Renueva la arena cuando sea necesario:** Mantener el arenero en buenas condiciones es parte importante del bienestar de tu mascota.
+- **Coloca el arenero en un lugar adecuado:** Busca un espacio tranquilo, accesible y ventilado.
 
-## Estado funcional por módulo
+### 11. Lo que tu gato necesita, todos los días
+- Un arenero limpio.
+- Un espacio cómodo.
+- Un hogar agradable.
+- Y tú, una solución que haga todo más sencillo.  
+**Eso es PeruCat.**
 
-### Autenticación
+### 12. Descubre PeruCat
+Encuentra la arena ideal para tu gato y disfruta de una limpieza más práctica todos los días.  
+**PeruCat — Limpieza que se siente.**
 
-Está implementada, pero con una diferencia importante frente al documento de implementación.
+---
 
-Lo que realmente ocurre:
+## 🏛️ Arquitectura del Sistema
 
-- `POST /api/v1/auth/register`
-- `POST /api/v1/auth/login`
-- `POST /api/v1/auth/refresh`
-- `POST /api/v1/auth/logout`
-- el backend entrega `access_token` y `refresh_token` en cookies `HttpOnly`
-- el frontend usa `withCredentials` para que el navegador envíe las cookies
-- la sesión visual se reconstruye consultando `GET /api/v1/users/me`
+### Backend (`apps/api`)
+- **Framework:** NestJS 10 con TypeScript.
+- **ORM:** Prisma 6 con 37 modelos relacionales multi-tenant.
+- **Base de Datos:** PostgreSQL 18.
+- **Autenticación:** JWT con Roles RBAC (`PLATFORM_SUPER_ADMIN`, `TENANT_ADMIN`, `TENANT_MANAGER`, `CUSTOMER`).
+- **Pagos:** Culqi API v2 con Webhooks e Idempotencia.
+- **Logística:** Zonas dinámicas, tarifas de envío y tracking de pedidos.
 
-Lo que no coincide con `implementacion.md`:
-
-- no se guardan tokens reales en `localStorage`
-- `AuthService` no trabaja como un cliente de bearer tokens tradicional
-- `getAccessToken()` y `getRefreshToken()` están como stubs para no romper compilación
-
-### Catálogo
-
-Está bien cubierto.
-
-Backend:
-
-- `GET /api/v1/catalog/products`
-- `GET /api/v1/catalog/products/{slug}`
-- `GET /api/v1/catalog/categories`
-- `GET /api/v1/catalog/categories/{slug}`
-
-Frontend:
-
-- home en `/`
-- listado en `/productos`
-- detalle en `/products/:slug`
-
-Observación:
-
-- el plan original hablaba de `/` como catálogo principal; la implementación actual usa una home separada y el catálogo en `/productos`
-
-### Carrito
-
-Implementado tanto en frontend como backend.
-
-Backend:
-
-- `GET /api/v1/cart`
-- `POST /api/v1/cart/items`
-- `PATCH /api/v1/cart/items/{productId}?quantity=...`
-- `DELETE /api/v1/cart`
-- `DELETE /api/v1/cart/items/{productId}`
-
-Frontend:
-
-- soporte para carrito autenticado y carrito local de respaldo
-- sincronización automática entre carrito local y carrito backend cuando hay sesión
-
-### Wishlist
-
-Implementada.
-
-Backend:
-
-- `GET /api/v1/wishlist`
-- `POST /api/v1/wishlist/items/{productId}`
-- `DELETE /api/v1/wishlist/items/{productId}`
-
-Frontend:
-
-- maneja wishlist con `Set<number>`
-- persiste respaldo local en `localStorage`
-
-### Checkout, pedidos y tracking
-
-Implementado en una versión funcional.
-
-Backend:
-
-- `POST /api/v1/orders`
-- `GET /api/v1/orders`
-- `GET /api/v1/orders/{orderNumber}`
-- `GET /api/v1/orders/{orderNumber}/tracking`
-
-Frontend:
-
-- checkout en `/checkout`
-- pago en `/checkout/payment/:orderId`
-- historial en `/orders`
-- detalle en `/orders/:orderNumber`
-
-### Pagos
-
-Integrado con Culqi a nivel de backend y consumido desde el frontend.
-
-Backend:
-
-- `POST /api/v1/payments`
-- `GET /api/v1/payments/{orderId}`
-
-Frontend:
-
-- `payment.service.ts` envía `orderId` y `culqiToken`
-- la UI de pago existe como página separada
-- la clave pública ya no está hardcodeada en el componente
-
-### Envíos
-
-También existe la parte operativa.
-
-Backend:
-
-- `POST /api/v1/shipping/rates/calculate`
-- `GET /api/v1/shipping/zones`
-- admin de despachos
-- webhook para integración externa de envíos
-
-Frontend:
-
-- `shipping.service.ts` consume zonas y cálculo de tarifa
-
-### Administración
-
-Está bastante completo.
-
-Backend:
-
-- productos admin
-- categorías admin
-- órdenes admin
-- envíos admin
-- cupones admin
-- usuarios admin
-- auditoría admin
-
-Frontend:
-
-- dashboard
-- productos
-- categorías
-- pedidos
-- despachos
-- cupones
-- usuarios
-- auditoría
-
-## Rutas reales del frontend
-
-Rutas principales actualmente presentes:
-
-- `/`
-- `/productos`
-- `/products/:slug`
-- `/login`
-- `/register`
-- `/password-reset`
-- `/politicas`
-- `/cart`
-- `/wishlist`
-- `/checkout`
-- `/checkout/payment/:orderId`
-- `/orders`
-- `/orders/:orderNumber`
-- `/admin`
-
-## Endpoints backend relevantes
-
-La API está organizada con controladores concretos y el backend efectivamente expone estas rutas:
-
-- `POST /api/v1/auth/register`
-- `POST /api/v1/auth/login`
-- `POST /api/v1/auth/refresh`
-- `POST /api/v1/auth/logout`
-- `POST /api/v1/auth/password-reset/request`
-- `POST /api/v1/auth/password-reset/confirm`
-- `GET /api/v1/users/me`
-- `PUT /api/v1/users/me`
-- `GET /api/v1/users/me/addresses`
-- `POST /api/v1/users/me/addresses`
-- `GET /api/v1/catalog/products`
-- `GET /api/v1/catalog/products/{slug}`
-- `GET /api/v1/catalog/categories`
-- `GET /api/v1/catalog/categories/{slug}`
-- `GET /api/v1/catalog/categories/{slug}/products`
-- `GET /api/v1/cart`
-- `POST /api/v1/cart/items`
-- `PATCH /api/v1/cart/items/{productId}`
-- `DELETE /api/v1/cart`
-- `DELETE /api/v1/cart/items/{productId}`
-- `GET /api/v1/wishlist`
-- `POST /api/v1/wishlist/items/{productId}`
-- `DELETE /api/v1/wishlist/items/{productId}`
-- `POST /api/v1/orders`
-- `GET /api/v1/orders`
-- `GET /api/v1/orders/{orderNumber}`
-- `GET /api/v1/orders/{orderNumber}/tracking`
-- `POST /api/v1/payments`
-- `GET /api/v1/payments/{orderId}`
-- `POST /api/v1/shipping/rates/calculate`
-- `GET /api/v1/shipping/zones`
-- `GET /api/v1/coupons`
-- `POST /api/v1/coupons/validate`
-- `GET /api/v1/admin/products`
-- `GET /api/v1/admin/categories`
-- `GET /api/v1/admin/orders`
-- `GET /api/v1/admin/shipments`
-- `GET /api/v1/admin/users`
-- `GET /api/v1/admin/audit-logs`
-
-## Observaciones técnicas importantes
-
-- El frontend sí está conectado a la API real mediante `HttpClient`.
-- `jwt.interceptor.ts` añade `withCredentials` a las peticiones hacia `/api/v1`.
-- El interceptor intenta recuperar sesión ante `401`/`403` llamando a `/auth/refresh`.
-- El backend gestiona la autenticación con cookies, no con bearer tokens visibles en el cliente.
-- `angular.json` copia imágenes desde `public` y `IMG`, así que el proyecto ya está preparado para recursos visuales reales.
-- Hay metadatos SEO por ruta en `app.routes.ts`, algo que no estaba descrito en `implementacion.md`.
-- Existen páginas adicionales de contenido estático que no estaban en el plan original, como `/politicas`.
-
-## Diferencias frente a `implementacion.md`
-
-`implementacion.md` sigue siendo útil como referencia de intención, pero ya no describe fielmente la implementación actual.
-
-Las diferencias más claras son:
-
-- autenticación basada en cookies en lugar de tokens manejados en el cliente
-- existencia de la ruta `/productos` en lugar de usar solo `/` como catálogo
-- presencia de páginas SEO y legales adicionales
-- ausencia de un `api.service.ts` central explícito en el frontend actual
-- varias piezas reales del backend no estaban nombradas de forma explícita en el plan, aunque sí están implementadas
-
-## Estado actual resumido
-
-### Ya bastante sólido
-
-- autenticación con cookies `HttpOnly`
-- catálogo funcional y bien enlazado
-- carrito y wishlist con respaldo local
-- checkout operativo
-- pago con Culqi
-- admin funcional
-- documentación viva en `README.md`, `contexto.md` y `alineacion-backend.md`
-
-### Aún por pulir
-
-- reducción de presupuestos CSS
-- refinamiento visual de algunas pantallas admin
-- estandarización final de contratos y tipos compartidos
-- mejoras de soporte a producción y variables de entorno en frontend
-
-## Conclusión
-
-La plataforma está bastante avanzada y tiene una base coherente para operar como e-commerce real.
-
-Si necesitamos seguir desarrollando, este archivo debe tomarse como la foto del estado actual, mientras que `implementacion.md` debe leerse como el plan original de arquitectura, no como el inventario exacto de lo ya construido.
+### Frontend (`apps/web`)
+- **Framework:** React 19 + TypeScript + Vite.
+- **Estilos:** Tailwind CSS con la paleta de marca PeruCat (Morado `#6A2CFF`, Azul `#1976FF`, Turquesa `#00B8C9`, Navy `#0D1B3D`).
+- **Componentes:** Storefront interactivo, Marquee infinito de ofertas, Selector de variantes, Carrito con Slide-over Drawer, Wishlist y Panel Administrativo.

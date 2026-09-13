@@ -1,0 +1,22 @@
+# Robots.txt for PeruCat E-Commerce Platform
+User-agent: *
+Allow: /
+Allow: /productos
+Allow: /products/*
+Allow: /politicas
+Allow: /favoritos
+
+# Disallow private user & administrative dashboards
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /platform
+Disallow: /platform/*
+Disallow: /checkout
+Disallow: /checkout/*
+Disallow: /mis-pedidos
+Disallow: /mis-pedidos/*
+Disallow: /login
+Disallow: /register
+
+# Sitemap reference
+Sitemap: https://perucat.pe/sitemap.xml

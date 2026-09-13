@@ -1,0 +1,19 @@
+{
+  "name": "cleo-platform",
+  "version": "1.0.0",
+  "description": "Cleo Platform - Multi-Tenant SaaS E-Commerce Platform",
+  "private": true,
+  "scripts": {
+    "dev:api": "cd apps/api && npm run start:dev",
+    "dev:web": "cd apps/web && npm run dev",
+    "build:api": "cd apps/api && npm run build",
+    "build:web": "cd apps/web && npm run build",
+    "prisma:generate": "cd apps/api && npx prisma generate",
+    "prisma:push": "cd apps/api && npx prisma db push",
+    "prisma:seed": "cd apps/api && npx ts-node prisma/seed.ts",
+    "prisma:studio": "cd apps/api && npx prisma studio"
+  },
+  "keywords": ["cleo", "saas", "multi-tenant", "ecommerce", "nestjs", "prisma", "react", "vite", "tailwind"],
+  "author": "Cleo Platform",
+  "license": "UNLICENSED"
+}

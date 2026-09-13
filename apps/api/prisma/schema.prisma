@@ -1,0 +1,788 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// 1. PLATAFORMA, TENANTS, USUARIOS Y ROLES
+// ==========================================
+
+model Tenant {
+  id             BigInt    @id @default(autoincrement())
+  name           String    @db.VarChar(150)
+  slug           String    @unique @db.VarChar(150)
+  domain         String?   @unique @db.VarChar(255)
+  subdomain      String?   @unique @db.VarChar(150)
+  description    String?   @db.Text
+  logoUrl        String?   @map("logo_url") @db.Text
+  faviconUrl     String?   @map("favicon_url") @db.Text
+  primaryColor   String?   @default("#6A2CFF") @map("primary_color") @db.VarChar(20)
+  secondaryColor String?   @default("#1976FF") @map("secondary_color") @db.VarChar(20)
+  status         String    @default("ACTIVE") @db.VarChar(30)
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz()
+
+  // Relaciones
+  settings           TenantSettings?
+  userTenants        UserTenant[]
+  categories         Category[]
+  products           Product[]
+  productOptions     ProductOption[]
+  inventoryMovements InventoryMovement[]
+  carts              Cart[]
+  wishlists          Wishlist[]
+  orders             Order[]
+  shippingZones      ShippingZone[]
+  shipments          Shipment[]
+  coupons            Coupon[]
+  notifications      Notification[]
+  auditLogs          AuditLog[]
+  subscription       Subscription?
+
+  @@map("tenants")
+}
+
+model TenantSettings {
+  id            BigInt   @id @default(autoincrement())
+  tenantId      BigInt   @unique @map("tenant_id")
+  currency      String   @default("PEN") @db.VarChar(10)
+  timezone      String   @default("America/Lima") @db.VarChar(50)
+  locale        String   @default("es_PE") @db.VarChar(20)
+  supportEmail  String?  @map("support_email") @db.VarChar(255)
+  supportPhone  String?  @map("support_phone") @db.VarChar(30)
+  address       String?  @db.Text
+  businessHours Json?    @map("business_hours")
+  settings      Json?
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("tenant_settings")
+}
+
+model User {
+  id         BigInt    @id @default(autoincrement())
+  authUserId String?   @unique @map("auth_user_id") @db.Uuid
+  email      String    @unique @db.VarChar(255)
+  password   String?   @db.VarChar(255)
+  firstName  String    @map("first_name") @db.VarChar(100)
+  lastName   String    @map("last_name") @db.VarChar(100)
+  phone      String?   @db.VarChar(30)
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz()
+
+  // Relaciones
+  userTenants        UserTenant[]
+  addresses          Address[]
+  carts              Cart[]
+  wishlists          Wishlist[]
+  orders             Order[]
+  couponRedemptions  CouponRedemption[]
+  notifications      Notification[]
+  auditLogs          AuditLog[]
+  inventoryMovements InventoryMovement[]
+  statusHistory      OrderStatusHistory[]
+
+  @@map("users")
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  scope       String  @default("TENANT") @db.VarChar(30) // PLATFORM | TENANT
+  description String? @db.Text
+  active      Boolean @default(true)
+
+  userTenants UserTenant[]
+
+  @@map("roles")
+}
+
+model UserTenant {
+  userId   BigInt   @map("user_id")
+  tenantId BigInt   @map("tenant_id")
+  roleId   Int      @map("role_id")
+  active   Boolean  @default(true)
+  joinedAt DateTime @default(now()) @map("joined_at") @db.Timestamptz()
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([userId, tenantId])
+  @@index([tenantId])
+  @@map("user_tenants")
+}
+
+model Address {
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt   @map("user_id")
+  department  String   @db.VarChar(100)
+  province    String   @db.VarChar(100)
+  district    String   @db.VarChar(100)
+  addressLine String   @map("address_line") @db.Text
+  reference   String?  @db.Text
+  postalCode  String?  @map("postal_code") @db.VarChar(20)
+  isDefault   Boolean  @default(false) @map("is_default")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// ==========================================
+// 2. CATEGORÍAS Y PRODUCTOS
+// ==========================================
+
+model Category {
+  id           BigInt    @id @default(autoincrement())
+  tenantId     BigInt    @map("tenant_id")
+  parentId     BigInt?   @map("parent_id")
+  name         String    @db.VarChar(150)
+  slug         String    @db.VarChar(150)
+  description  String?   @db.Text
+  imageUrl     String?   @map("image_url") @db.Text
+  active       Boolean   @default(true)
+  displayOrder Int       @default(0) @map("display_order")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz()
+
+  tenant            Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent            Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children          Category[]        @relation("CategoryHierarchy")
+  productCategories ProductCategory[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@map("categories")
+}
+
+model Product {
+  id               BigInt    @id @default(autoincrement())
+  tenantId         BigInt    @map("tenant_id")
+  name             String    @db.VarChar(255)
+  slug             String    @db.VarChar(255)
+  baseSku          String?   @map("base_sku") @db.VarChar(100)
+  description      String?   @db.Text
+  shortDescription String?   @map("short_description") @db.Text
+  brand            String?   @db.VarChar(150)
+  weight           Decimal?  @db.Decimal(12, 3)
+  height           Decimal?  @db.Decimal(12, 3)
+  width            Decimal?  @db.Decimal(12, 3)
+  length           Decimal?  @db.Decimal(12, 3)
+  hasVariants      Boolean   @default(false) @map("has_variants")
+  featured         Boolean   @default(false)
+  active           Boolean   @default(true)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  deletedAt        DateTime? @map("deleted_at") @db.Timestamptz()
+
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  productCategories ProductCategory[]
+  variants          ProductVariant[]
+  images            ProductImage[]
+  variantOptions    ProductVariantOption[]
+  orderItems        OrderItem[]
+
+  @@unique([tenantId, slug])
+  @@unique([tenantId, baseSku])
+  @@index([tenantId])
+  @@map("products")
+}
+
+model ProductCategory {
+  productId  BigInt @map("product_id")
+  categoryId BigInt @map("category_id")
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
+  @@map("product_categories")
+}
+
+// ==========================================
+// 3. VARIANTES, OPCIONES Y PRECIOS
+// ==========================================
+
+model ProductVariant {
+  id        BigInt   @id @default(autoincrement())
+  productId BigInt   @map("product_id")
+  sku       String   @db.VarChar(100)
+  name      String?  @db.VarChar(150)
+  weight    Decimal? @db.Decimal(12, 3)
+  height    Decimal? @db.Decimal(12, 3)
+  width     Decimal? @db.Decimal(12, 3)
+  length    Decimal? @db.Decimal(12, 3)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  product            Product               @relation(fields: [productId], references: [id], onDelete: Cascade)
+  prices             ProductPrice[]
+  inventory          Inventory?
+  inventoryMovements InventoryMovement[]
+  variantValues      ProductVariantValue[]
+  cartItems          CartItem[]
+  wishlistItems      WishlistItem[]
+  orderItems         OrderItem[]
+
+  @@unique([productId, sku])
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model ProductOption {
+  id           BigInt  @id @default(autoincrement())
+  tenantId     BigInt  @map("tenant_id")
+  name         String  @db.VarChar(100) // Color, Talla, Capacidad
+  displayType  String  @default("BUTTON") @map("display_type") @db.VarChar(30)
+  displayOrder Int     @default(0) @map("display_order")
+  active       Boolean @default(true)
+
+  tenant         Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  values         ProductOptionValue[]
+  variantOptions ProductVariantOption[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("product_options")
+}
+
+model ProductOptionValue {
+  id           BigInt  @id @default(autoincrement())
+  optionId     BigInt  @map("option_id")
+  value        String  @db.VarChar(100)
+  label        String  @db.VarChar(100)
+  colorHex     String? @map("color_hex") @db.VarChar(20)
+  imageUrl     String? @map("image_url") @db.Text
+  displayOrder Int     @default(0) @map("display_order")
+
+  option        ProductOption         @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  variantValues ProductVariantValue[]
+
+  @@unique([optionId, value])
+  @@index([optionId])
+  @@map("product_option_values")
+}
+
+model ProductVariantOption {
+  id        BigInt @id @default(autoincrement())
+  productId BigInt @map("product_id")
+  optionId  BigInt @map("option_id")
+
+  product Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  option  ProductOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, optionId])
+  @@map("product_variant_options")
+}
+
+model ProductVariantValue {
+  variantId     BigInt @map("variant_id")
+  optionValueId BigInt @map("option_value_id")
+
+  variant     ProductVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  optionValue ProductOptionValue @relation(fields: [optionValueId], references: [id], onDelete: Cascade)
+
+  @@id([variantId, optionValueId])
+  @@map("product_variant_values")
+}
+
+model ProductImage {
+  id           BigInt  @id @default(autoincrement())
+  productId    BigInt  @map("product_id")
+  url          String  @db.Text
+  altText      String? @map("alt_text") @db.VarChar(255)
+  displayOrder Int     @default(0) @map("display_order")
+  isPrimary    Boolean @default(false) @map("is_primary")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductPrice {
+  id             BigInt    @id @default(autoincrement())
+  variantId      BigInt    @map("variant_id")
+  price          Decimal   @db.Decimal(12, 2)
+  compareAtPrice Decimal?  @map("compare_at_price") @db.Decimal(12, 2)
+  currency       String    @default("PEN") @db.VarChar(10)
+  startDate      DateTime  @default(now()) @map("start_date") @db.Date
+  endDate        DateTime? @map("end_date") @db.Date
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId])
+  @@map("product_prices")
+}
+
+// ==========================================
+// 4. INVENTARIO Y MOVIMIENTOS
+// ==========================================
+
+model Inventory {
+  id             BigInt   @id @default(autoincrement())
+  variantId      BigInt   @unique @map("variant_id")
+  availableStock Int      @default(0) @map("available_stock")
+  reservedStock  Int      @default(0) @map("reserved_stock")
+  minimumStock   Int      @default(5) @map("minimum_stock")
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@map("inventory")
+}
+
+model InventoryMovement {
+  id            BigInt   @id @default(autoincrement())
+  tenantId      BigInt   @map("tenant_id")
+  variantId     BigInt   @map("variant_id")
+  movementType  String   @map("movement_type") @db.VarChar(40) // PURCHASE, SALE, RESERVATION, RELEASE, RETURN, ADJUSTMENT
+  quantity      Int
+  stockBefore   Int      @map("stock_before")
+  stockAfter    Int      @map("stock_after")
+  referenceType String?  @map("reference_type") @db.VarChar(50) // ORDER, MANUAL, RETURN
+  referenceId   BigInt?  @map("reference_id")
+  note          String?  @db.Text
+  createdBy     BigInt?  @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  user    User?          @relation(fields: [createdBy], references: [id])
+
+  @@index([tenantId])
+  @@index([variantId])
+  @@map("inventory_movements")
+}
+
+// ==========================================
+// 5. CARRITO Y WISHLIST
+// ==========================================
+
+model Cart {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  BigInt   @map("tenant_id")
+  userId    BigInt?  @map("user_id")
+  sessionId String?  @map("session_id") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  CartItem[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("carts")
+}
+
+model CartItem {
+  id                BigInt   @id @default(autoincrement())
+  cartId            BigInt   @map("cart_id")
+  variantId         BigInt   @map("variant_id")
+  quantity          Int      @default(1)
+  unitPriceSnapshot Decimal  @map("unit_price_snapshot") @db.Decimal(12, 2)
+  addedAt           DateTime @default(now()) @map("added_at") @db.Timestamptz()
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+  @@map("cart_items")
+}
+
+model Wishlist {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  BigInt   @map("tenant_id")
+  userId    BigInt   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  tenant Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  WishlistItem[]
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id         BigInt   @id @default(autoincrement())
+  wishlistId BigInt   @map("wishlist_id")
+  variantId  BigInt   @map("variant_id")
+  addedAt    DateTime @default(now()) @map("added_at") @db.Timestamptz()
+
+  wishlist Wishlist       @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  variant  ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([wishlistId, variantId])
+  @@map("wishlist_items")
+}
+
+// ==========================================
+// 6. PEDIDOS Y SNAPSHOTS
+// ==========================================
+
+model Order {
+  id                BigInt    @id @default(autoincrement())
+  tenantId          BigInt    @map("tenant_id")
+  userId            BigInt    @map("user_id")
+  orderNumber       String    @unique @map("order_number") @db.VarChar(50)
+  status            String    @default("PENDING_PAYMENT") @db.VarChar(40) // PENDING_PAYMENT, PAID, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  subtotal          Decimal   @db.Decimal(12, 2)
+  shippingCost      Decimal   @default(0.00) @map("shipping_cost") @db.Decimal(12, 2)
+  discountAmount    Decimal   @default(0.00) @map("discount_amount") @db.Decimal(12, 2)
+  taxAmount         Decimal   @default(0.00) @map("tax_amount") @db.Decimal(12, 2)
+  total             Decimal   @db.Decimal(12, 2)
+  currency          String    @default("PEN") @db.VarChar(10)
+  paymentStatus     String    @default("PENDING") @map("payment_status") @db.VarChar(30)
+  fulfillmentStatus String    @default("UNFULFILLED") @map("fulfillment_status") @db.VarChar(30)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+  cancelledAt       DateTime? @map("cancelled_at") @db.Timestamptz()
+
+  tenant            Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shippingAddress   OrderShippingAddress?
+  items             OrderItem[]
+  statusHistory     OrderStatusHistory[]
+  payments          Payment[]
+  shipment          Shipment?
+  couponRedemptions CouponRedemption[]
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+model OrderShippingAddress {
+  id          BigInt  @id @default(autoincrement())
+  orderId     BigInt  @unique @map("order_id")
+  department  String  @db.VarChar(100)
+  province    String  @db.VarChar(100)
+  district    String  @db.VarChar(100)
+  addressLine String  @map("address_line") @db.Text
+  reference   String? @db.Text
+  postalCode  String? @map("postal_code") @db.VarChar(20)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_shipping_address")
+}
+
+model OrderItem {
+  id              BigInt  @id @default(autoincrement())
+  orderId         BigInt  @map("order_id")
+  productId       BigInt  @map("product_id")
+  variantId       BigInt  @map("variant_id")
+  productName     String  @map("product_name") @db.VarChar(255)
+  productSku      String  @map("product_sku") @db.VarChar(100)
+  variantName     String? @map("variant_name") @db.VarChar(150)
+  unitPrice       Decimal @map("unit_price") @db.Decimal(12, 2)
+  quantity        Int
+  subtotal        Decimal @db.Decimal(12, 2)
+  productSnapshot Json?   @map("product_snapshot")
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id        BigInt   @id @default(autoincrement())
+  orderId   BigInt   @map("order_id")
+  changedBy BigInt?  @map("changed_by")
+  status    String   @db.VarChar(40)
+  note      String?  @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [changedBy], references: [id])
+
+  @@index([orderId])
+  @@map("order_status_history")
+}
+
+// ==========================================
+// 7. PAGOS Y WEBHOOKS
+// ==========================================
+
+model Payment {
+  id             BigInt    @id @default(autoincrement())
+  orderId        BigInt    @map("order_id")
+  provider       String    @default("CULQI") @db.VarChar(50)
+  transactionId  String?   @map("transaction_id") @db.VarChar(255)
+  idempotencyKey String?   @unique @map("idempotency_key") @db.VarChar(255)
+  amount         Decimal   @db.Decimal(12, 2)
+  currency       String    @default("PEN") @db.VarChar(10)
+  status         String    @default("PENDING") @db.VarChar(40) // PENDING, PROCESSING, PAID, FAILED, CANCELLED
+  paymentMethod  String?   @map("payment_method") @db.VarChar(50)
+  metadata       Json?
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  paidAt         DateTime? @map("paid_at") @db.Timestamptz()
+  failedAt       DateTime? @map("failed_at") @db.Timestamptz()
+
+  order    Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  webhooks PaymentWebhook[]
+
+  @@index([orderId])
+  @@map("payments")
+}
+
+model PaymentWebhook {
+  id          BigInt    @id @default(autoincrement())
+  paymentId   BigInt?   @map("payment_id")
+  provider    String    @db.VarChar(50)
+  eventId     String    @unique @map("event_id") @db.VarChar(255)
+  eventType   String    @map("event_type") @db.VarChar(100)
+  payload     Json
+  status      String    @default("PENDING") @db.VarChar(30)
+  processed   Boolean   @default(false)
+  processedAt DateTime? @map("processed_at") @db.Timestamptz()
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+  @@map("payment_webhooks")
+}
+
+// ==========================================
+// 8. ENVÍOS Y TRACKING
+// ==========================================
+
+model ShippingZone {
+  id       BigInt  @id @default(autoincrement())
+  tenantId BigInt  @map("tenant_id")
+  name     String  @db.VarChar(100)
+  active   Boolean @default(true)
+
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  rates     ShippingRate[]
+  shipments Shipment[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@map("shipping_zones")
+}
+
+model ShippingRate {
+  id        BigInt  @id @default(autoincrement())
+  zoneId    BigInt  @map("zone_id")
+  weightMin Decimal @map("weight_min") @db.Decimal(12, 3)
+  weightMax Decimal @map("weight_max") @db.Decimal(12, 3)
+  price     Decimal @db.Decimal(12, 2)
+  currency  String  @default("PEN") @db.VarChar(10)
+  active    Boolean @default(true)
+
+  zone ShippingZone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@index([zoneId])
+  @@map("shipping_rates")
+}
+
+model Shipment {
+  id              BigInt    @id @default(autoincrement())
+  tenantId        BigInt    @map("tenant_id")
+  orderId         BigInt    @unique @map("order_id")
+  zoneId          BigInt?   @map("zone_id")
+  courier         String?   @db.VarChar(100)
+  deliveryService String?   @map("delivery_service") @db.VarChar(100)
+  trackingCode    String?   @map("tracking_code") @db.VarChar(150)
+  shippingCost    Decimal   @default(0.00) @map("shipping_cost") @db.Decimal(12, 2)
+  status          String    @default("PENDING") @db.VarChar(40) // PENDING, PROCESSING, SHIPPED, DELIVERED
+  shippedAt       DateTime? @map("shipped_at") @db.Timestamptz()
+  deliveredAt     DateTime? @map("delivered_at") @db.Timestamptz()
+
+  tenant   Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  order    Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  zone     ShippingZone?      @relation(fields: [zoneId], references: [id])
+  tracking ShipmentTracking[]
+
+  @@index([tenantId])
+  @@map("shipments")
+}
+
+model ShipmentTracking {
+  id          BigInt   @id @default(autoincrement())
+  shipmentId  BigInt   @map("shipment_id")
+  status      String   @db.VarChar(50)
+  location    String?  @db.VarChar(150)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+  @@map("shipment_tracking")
+}
+
+// ==========================================
+// 9. MARKETING Y CUPONES
+// ==========================================
+
+model Coupon {
+  id                BigInt   @id @default(autoincrement())
+  tenantId          BigInt   @map("tenant_id")
+  code              String   @db.VarChar(50)
+  discountType      String   @default("PERCENTAGE") @map("discount_type") @db.VarChar(30) // PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING
+  discountValue     Decimal  @map("discount_value") @db.Decimal(12, 2)
+  maxDiscountAmount Decimal? @map("max_discount_amount") @db.Decimal(12, 2)
+  minOrderAmount    Decimal? @map("min_order_amount") @db.Decimal(12, 2)
+  maxUses           Int?     @map("max_uses")
+  usedCount         Int      @default(0) @map("used_count")
+  perUserLimit      Int?     @default(1) @map("per_user_limit")
+  startDate         DateTime @default(now()) @map("start_date") @db.Date
+  endDate           DateTime @map("end_date") @db.Date
+  active            Boolean  @default(true)
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  redemptions CouponRedemption[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id             BigInt   @id @default(autoincrement())
+  couponId       BigInt   @map("coupon_id")
+  userId         BigInt   @map("user_id")
+  orderId        BigInt   @map("order_id")
+  discountAmount Decimal  @map("discount_amount") @db.Decimal(12, 2)
+  redeemedAt     DateTime @default(now()) @map("redeemed_at") @db.Timestamptz()
+
+  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order  Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([couponId])
+  @@index([userId])
+  @@index([orderId])
+  @@map("coupon_redemptions")
+}
+
+// ==========================================
+// 10. NOTIFICACIONES Y AUDITORÍA
+// ==========================================
+
+model Notification {
+  id        BigInt    @id @default(autoincrement())
+  tenantId  BigInt    @map("tenant_id")
+  userId    BigInt    @map("user_id")
+  type      String    @db.VarChar(50)
+  channel   String    @default("EMAIL") @db.VarChar(30) // EMAIL, WHATSAPP, PUSH, IN_APP
+  payload   Json
+  status    String    @default("PENDING") @db.VarChar(30)
+  sentAt    DateTime? @map("sent_at") @db.Timestamptz()
+  readAt    DateTime? @map("read_at") @db.Timestamptz()
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  tenantId  BigInt?  @map("tenant_id")
+  userId    BigInt?  @map("user_id")
+  action    String   @db.VarChar(100)
+  entity    String   @db.VarChar(100)
+  entityId  BigInt?  @map("entity_id")
+  oldValue  Json?    @map("old_value")
+  newValue  Json?    @map("new_value")
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  userAgent String?  @map("user_agent") @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+// ==========================================
+// 11. MODELO SaaS (PLANES Y SUSCRIPCIONES)
+// ==========================================
+
+model Plan {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50) // FREE, BASIC, PRO, ENTERPRISE
+  displayName String   @map("display_name") @db.VarChar(100)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("PEN") @db.VarChar(10)
+  billingCycle String  @default("MONTHLY") @map("billing_cycle") @db.VarChar(20) // MONTHLY, YEARLY
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz()
+
+  limits        PlanLimit[]
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model PlanLimit {
+  id            Int     @id @default(autoincrement())
+  planId        Int     @map("plan_id")
+  resource      String  @db.VarChar(50) // products, orders, users, storage_mb, api_calls
+  maxLimit      Int     @map("max_limit") // -1 = ilimitado
+  description   String? @db.Text
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, resource])
+  @@map("plan_limits")
+}
+
+model Subscription {
+  id             BigInt    @id @default(autoincrement())
+  tenantId       BigInt    @unique @map("tenant_id")
+  planId         Int       @map("plan_id")
+  status         String    @default("ACTIVE") @db.VarChar(20) // ACTIVE, PAST_DUE, CANCELLED, TRIAL
+  trialStartsAt  DateTime? @map("trial_starts_at") @db.Timestamptz()
+  trialEndsAt    DateTime? @map("trial_ends_at") @db.Timestamptz()
+  currentPeriodStart DateTime @default(now()) @map("current_period_start") @db.Timestamptz()
+  currentPeriodEnd   DateTime @map("current_period_end") @db.Timestamptz()
+  cancelledAt    DateTime? @map("cancelled_at") @db.Timestamptz()
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan   Plan   @relation(fields: [planId], references: [id])
+
+  @@index([tenantId])
+  @@map("subscriptions")
+}
