@@ -3,23 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { useTenant } from '../../../hooks/useTenant';
 import {
-  Compass,
+  Search,
+  ArrowRight,
   Home,
   ShoppingBag,
-  Search,
-  ArrowLeft,
   Sparkles,
   HelpCircle,
+  MessageCircle,
+  Truck,
+  ShieldCheck,
   Package,
   Layers,
-  ShieldCheck,
-  Store,
+  ChevronRight,
+  Compass,
 } from 'lucide-react';
 
 export const NotFound: React.FC = () => {
   const [query, setQuery] = useState('');
   const { currentTenant } = useTenant();
-  const { user, canAccessTenantAdmin, currentRole } = useAuth();
+  const { user, canAccessTenantAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -29,134 +31,214 @@ export const NotFound: React.FC = () => {
     }
   };
 
-  const quickLinks = [
-    { label: 'Frutos Secos', path: '/productos?category=frutos-secos' },
-    { label: 'Superalimentos', path: '/productos?category=superalimentos' },
-    { label: 'Miel y Derivados', path: '/productos?category=miel-y-derivados' },
-    { label: 'Todo el Catálogo', path: '/productos' },
+  const quickCategories = [
+    { label: 'PeruCat Clásica', path: '/productos?search=clasica' },
+    { label: 'Carbón Activo', path: '/productos?search=carbon' },
+    { label: 'Aroma Lavanda', path: '/productos?search=lavanda' },
+    { label: 'Packs Familiares', path: '/productos' },
   ];
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-16 relative overflow-hidden bg-[#F7F8FC]">
-      {/* Ambient Blurred Glowing Orbs */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-secondary/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-[85vh] bg-[#F7F8FC] relative overflow-hidden">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-10 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-2xl w-full text-center relative z-10 space-y-8 animate-in fade-in zoom-in-95 duration-200">
-        {/* Animated Badge & Floating Icon */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-3xl bg-white shadow-2xl border border-gray-100/80 flex items-center justify-center text-primary group transition-transform hover:scale-105">
-              <Compass className="w-12 h-12 text-primary animate-[spin_10s_linear_infinite]" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 p-2 rounded-2xl bg-grad-primary text-white shadow-glow-primary">
-              <Sparkles className="w-4 h-4" />
-            </div>
+      {/* Editorial Top-Aligned Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-20 sm:pb-28">
+        
+        {/* Top Eyebrow & Status */}
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-black text-xs uppercase tracking-wider">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            <span>Error 404</span>
           </div>
-
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-light text-primary text-xs font-bold uppercase tracking-wider shadow-sm">
-            <span>Error 404 • Ruta no encontrada</span>
-          </div>
+          <span className="text-gray-400 text-xs font-semibold">•</span>
+          <span className="text-gray-500 text-xs font-medium">Página no encontrada</span>
         </div>
 
-        {/* Big Gradient 404 Headline */}
-        <div className="space-y-3">
-          <h1 className="text-7xl sm:text-8xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-purple to-secondary select-none">
-            404
-          </h1>
-          <h2 className="text-2xl sm:text-3xl font-black text-navy">
-            Parece que te has desviado del camino
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
-            La página o recurso que estás buscando no existe, ha sido movido de lugar o no está disponible en este momento.
-          </p>
-        </div>
+        {/* Large Editorial Headline & Summary */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mb-12">
+          <div className="lg:col-span-8 space-y-4">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-navy tracking-tight leading-[1.15]">
+              No pudimos encontrar la página que estás buscando.
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl leading-relaxed">
+              La dirección URL que ingresaste puede estar rota, haber sido renombrada o ya no existir en la tienda.
+              Puedes realizar una búsqueda rápida o explorar las secciones recomendadas a continuación.
+            </p>
+          </div>
 
-        {/* Integrated Search Bar */}
-        <div className="max-w-md mx-auto">
-          <form onSubmit={handleSearch} className="relative group">
-            <input
-              type="text"
-              placeholder="Buscar productos en el catálogo..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-gray-200 text-xs text-navy placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm group-hover:border-primary/40 font-medium"
-            />
-            <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 group-hover:text-primary transition-colors" />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-grad-primary text-white font-bold text-xs shadow-glow-primary hover:opacity-95 transition-all"
-            >
-              Buscar
-            </button>
-          </form>
-
-          {/* Quick Categories Chips */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-3 text-[11px]">
-            <span className="text-gray-400 font-semibold">Sugerencias:</span>
-            {quickLinks.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="px-2.5 py-1 rounded-full bg-white border border-gray-200 text-navy hover:text-primary hover:border-primary/40 transition-colors font-medium shadow-xs"
+          {/* Search Bar & Direct Home Button */}
+          <div className="lg:col-span-4 space-y-4">
+            <form onSubmit={handleSearch} className="relative group">
+              <input
+                type="text"
+                placeholder="Buscar arenas sanitarias, packs..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full pl-11 pr-24 py-3.5 rounded-2xl bg-white border border-gray-200 text-sm text-navy placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all shadow-sm font-medium"
+              />
+              <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 group-hover:text-primary transition-colors" />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-grad-primary text-white font-extrabold text-xs shadow-glow-primary hover:opacity-95 transition-all"
               >
-                {item.label}
+                Buscar
+              </button>
+            </form>
+
+            {/* Quick Suggestions Chips */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <span className="text-gray-400 font-semibold mr-1">Populares:</span>
+              {quickCategories.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-navy hover:text-primary hover:border-primary/40 transition-colors font-medium text-[11px] shadow-xs"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <Link
+                to="/"
+                className="px-5 py-3 rounded-2xl bg-navy hover:bg-navy-light text-white font-extrabold text-xs flex items-center gap-2 shadow-md transition-all transform hover:-translate-y-0.5"
+              >
+                <Home className="w-4 h-4 text-accent" />
+                <span>Volver al Inicio</span>
               </Link>
-            ))}
+
+              <Link
+                to="/productos"
+                className="px-5 py-3 rounded-2xl bg-white hover:bg-gray-50 border border-gray-200 text-navy font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <ShoppingBag className="w-4 h-4 text-primary" />
+                <span>Ver Productos</span>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Action Buttons Hub */}
-        <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            to="/"
-            className="px-6 py-3.5 rounded-2xl bg-grad-primary text-white font-extrabold text-xs shadow-glow-primary hover:opacity-95 transition-all flex items-center gap-2 transform hover:-translate-y-0.5"
-          >
-            <Home className="w-4 h-4" />
-            <span>Volver al Inicio</span>
-          </Link>
+        {/* ── Three-Column Card Grid (React Bits Pro 404-4 Style) ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 border-t border-gray-200">
+          
+          {/* Column 1: Catálogo de Arenas Sanitarias */}
+          <div className="bg-white rounded-3xl p-7 border border-gray-100 shadow-sm hover:shadow-card-hover transition-all group flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center transition-transform group-hover:scale-110">
+                <ShoppingBag className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-black text-navy group-hover:text-primary transition-colors">
+                Catálogo de Arenas PeruCat
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                Descubre nuestra gama de bentonita 100% natural, fórmula con carbón activo anti-olor y la suave edición con aroma a lavanda.
+              </p>
+            </div>
 
-          <Link
-            to="/productos"
-            className="px-6 py-3.5 rounded-2xl bg-white border border-gray-200 text-navy font-bold text-xs hover:border-primary/40 hover:text-primary transition-all shadow-sm flex items-center gap-2 transform hover:-translate-y-0.5"
-          >
-            <ShoppingBag className="w-4 h-4 text-secondary" />
-            <span>Ver Productos</span>
-          </Link>
+            <div className="pt-6">
+              <Link
+                to="/productos"
+                className="inline-flex items-center gap-2 text-xs font-extrabold text-primary hover:text-primary-hover group-hover:translate-x-1 transition-all"
+              >
+                <span>Explorar todo el catálogo</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
 
-          {/* Role-Aware Direct Shortcut */}
-          {canAccessTenantAdmin ? (
-            <Link
-              to="/admin"
-              className="px-5 py-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-secondary font-bold text-xs hover:bg-blue-100 transition-colors flex items-center gap-2"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Panel Admin Tienda</span>
+          {/* Column 2: Guía de Cuidado & Beneficios */}
+          <div className="bg-white rounded-3xl p-7 border border-gray-100 shadow-sm hover:shadow-card-hover transition-all group flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center transition-transform group-hover:scale-110">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-black text-navy group-hover:text-secondary transition-colors">
+                ¿Cómo Funciona PeruCat?
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                Conoce las ventajas de nuestra aglomeración instantánea en 3 segundos, fórmula 99.5% libre de polvo y consejos para el arenero.
+              </p>
+            </div>
+
+            <div className="pt-6">
+              <Link
+                to="/#descubre-perucat"
+                className="inline-flex items-center gap-2 text-xs font-extrabold text-secondary hover:text-secondary-hover group-hover:translate-x-1 transition-all"
+              >
+                <span>Conocer beneficios y guía</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Column 3: Soporte & Contacto WhatsApp */}
+          <div className="bg-white rounded-3xl p-7 border border-gray-100 shadow-sm hover:shadow-card-hover transition-all group flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-accent/15 text-accent-dark flex items-center justify-center transition-transform group-hover:scale-110">
+                <MessageCircle className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-black text-navy group-hover:text-accent transition-colors">
+                Soporte & Pedidos Directos
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+                ¿Necesitas ayuda con un pedido, envíos a provincias o consultas personalizadas? Nuestro equipo está listo para atenderte.
+              </p>
+            </div>
+
+            <div className="pt-6">
+              <a
+                href="https://wa.me/51999999999?text=Hola%20PeruCat%2C%20necesito%20ayuda%20con%20la%20tienda"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-xs font-extrabold text-accent hover:text-accent-dark group-hover:translate-x-1 transition-all"
+              >
+                <span>Chatear por WhatsApp</span>
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom Role & Support Links */}
+        <div className="mt-12 pt-8 border-t border-gray-200/80 flex flex-wrap items-center justify-between gap-4 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to="/" className="hover:text-navy font-semibold transition-colors">
+              Inicio
             </Link>
-          ) : user ? (
-            <Link
-              to="/mis-pedidos"
-              className="px-5 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-navy font-bold text-xs transition-colors flex items-center gap-2"
-            >
-              <Package className="w-4 h-4" />
-              <span>Mis Pedidos</span>
+            <span>•</span>
+            <Link to="/productos" className="hover:text-navy font-semibold transition-colors">
+              Productos
             </Link>
-          ) : null}
+            <span>•</span>
+            {canAccessTenantAdmin && (
+              <>
+                <Link to="/admin" className="text-primary font-bold hover:underline flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Panel Admin</span>
+                </Link>
+                <span>•</span>
+              </>
+            )}
+            {user && (
+              <Link to="/mis-pedidos" className="hover:text-navy font-semibold transition-colors">
+                Mis Pedidos
+              </Link>
+            )}
+          </div>
+
+          <div className="text-gray-400">
+            Tienda oficial <strong>{currentTenant?.name || 'PeruCat'}</strong>
+          </div>
         </div>
 
-        {/* Footer Support Info */}
-        <div className="pt-6 border-t border-gray-200/60 text-xs text-muted-foreground flex flex-wrap items-center justify-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <Store className="w-3.5 h-3.5 text-accent" />
-            <span>Tienda Oficial: <strong>{currentTenant?.name || 'PeruCat'}</strong></span>
-          </div>
-          <span>•</span>
-          <div className="flex items-center gap-1.5">
-            <HelpCircle className="w-3.5 h-3.5 text-primary" />
-            <span>Soporte: <strong>{currentTenant?.settings?.supportEmail || 'contacto@perucat.pe'}</strong></span>
-          </div>
-        </div>
       </div>
     </div>
   );
