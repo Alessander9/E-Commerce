@@ -40,13 +40,10 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
     location.pathname.startsWith('/favoritos') ||
     location.pathname.startsWith('/perfil');
 
-  // Do not render at all on auth pages (neither desktop nor mobile)
-  if (isAuthRoute) {
-    return null;
-  }
-
   // Automatically show a friendly greeting badge after 3 seconds on first visit
   useEffect(() => {
+    if (isAuthRoute) return;
+
     const timer = setTimeout(() => {
       if (!hasInteracted) {
         setShowAutoPopup(true);
@@ -54,7 +51,12 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
     }, 3500);
 
     return () => clearTimeout(timer);
-  }, [hasInteracted]);
+  }, [hasInteracted, isAuthRoute]);
+
+  // Do not render at all on auth pages (neither desktop nor mobile)
+  if (isAuthRoute) {
+    return null;
+  }
 
   const handleMouseEnter = () => {
     setIsOpen(true);
