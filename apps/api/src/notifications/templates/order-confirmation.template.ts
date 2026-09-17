@@ -13,7 +13,7 @@ export function orderConfirmationEmail(data: {
   tenantName: string;
   orderUrl: string;
 }): string {
-  const currencySymbol = data.currency === 'PEN' ? 'S/' : '$';
+  const currencySymbol = 'S/ ';
 
   const itemsHtml = data.items.map((item) => `
     <tr>

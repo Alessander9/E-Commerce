@@ -310,12 +310,25 @@ export class CatalogService {
     slug?: string;
     description?: string;
     brand?: string;
+    baseSku?: string;
     active?: boolean;
     featured?: boolean;
     categoryId?: string;
+    price?: number;
+    stock?: number;
+    imageUrl?: string;
   }) {
     const product = await this.prisma.product.findFirst({
       where: { id: productId, tenantId, deletedAt: null },
+      include: {
+        variants: {
+          include: {
+            prices: true,
+            inventory: true,
+          },
+        },
+        images: true,
+      },
     });
 
     if (!product) {
@@ -338,6 +351,7 @@ export class CatalogService {
     if (data.slug !== undefined) updateData.slug = data.slug.toLowerCase();
     if (data.description !== undefined) updateData.description = data.description;
     if (data.brand !== undefined) updateData.brand = data.brand;
+    if (data.baseSku !== undefined) updateData.baseSku = data.baseSku;
     if (data.active !== undefined) updateData.active = data.active;
     if (data.featured !== undefined) updateData.featured = data.featured;
 
@@ -350,6 +364,58 @@ export class CatalogService {
         productCategories: { include: { category: true } },
       },
     });
+
+    // Update default variant price if provided
+    if (data.price !== undefined && updated.variants && updated.variants.length > 0) {
+      const defaultVar = updated.variants[0];
+      const activePrice = defaultVar.prices?.find((p: any) => p.isActive) || defaultVar.prices?.[0];
+      if (activePrice) {
+        await this.prisma.productPrice.update({
+          where: { id: activePrice.id },
+          data: { price: Number(data.price) },
+        });
+      }
+    }
+
+    // Update default variant stock if provided
+    if (data.stock !== undefined && updated.variants && updated.variants.length > 0) {
+      const defaultVar = updated.variants[0];
+      if (defaultVar.inventory) {
+        await this.prisma.inventory.update({
+          where: { id: defaultVar.inventory.id },
+          data: { availableStock: Number(data.stock) },
+        });
+      }
+    }
+
+    // Update default variant SKU if baseSku provided
+    if (data.baseSku !== undefined && updated.variants && updated.variants.length > 0) {
+      const defaultVar = updated.variants[0];
+      await this.prisma.productVariant.update({
+        where: { id: defaultVar.id },
+        data: { sku: data.baseSku },
+      });
+    }
+
+    // Update primary image if provided
+    if (data.imageUrl !== undefined && data.imageUrl.trim() !== '') {
+      const primaryImg = updated.images?.find((img: any) => img.isPrimary) || updated.images?.[0];
+      if (primaryImg) {
+        await this.prisma.productImage.update({
+          where: { id: primaryImg.id },
+          data: { url: data.imageUrl },
+        });
+      } else {
+        await this.prisma.productImage.create({
+          data: {
+            productId,
+            url: data.imageUrl,
+            isPrimary: true,
+            displayOrder: 0,
+          },
+        });
+      }
+    }
 
     // Update category assignment if provided
     if (data.categoryId !== undefined) {
@@ -369,7 +435,15 @@ export class CatalogService {
       }
     }
 
-    return updated;
+    // Return fresh product with all relations
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        variants: { include: { prices: true, inventory: true } },
+        images: true,
+        productCategories: { include: { category: true } },
+      },
+    });
   }
 
   async deleteAdminProduct(tenantId: bigint, productId: bigint) {

@@ -544,7 +544,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <Link
                         to="/admin"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-secondary font-bold text-xs transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-[#4F46E5] font-bold text-xs transition-colors"
                       >
                         <ShieldCheck className="w-4 h-4" />
                         <span>Panel Admin Tienda</span>
@@ -552,21 +552,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
 
                     <Link
-                      to="/favoritos"
+                      to="/mis-pedidos"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-navy hover:bg-gray-50 rounded-xl transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-800 hover:bg-slate-50 rounded-xl transition-colors"
                     >
-                      <Heart className="w-4 h-4" />
-                      <span>Mis Favoritos</span>
+                      <Package className="w-4 h-4 text-[#4F46E5]" />
+                      <span>Mi Portal de Cliente</span>
                     </Link>
 
                     <Link
-                      to="/mis-pedidos"
+                      to="/favoritos"
                       onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-navy hover:bg-gray-50 rounded-xl transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
                     >
-                      <Package className="w-4 h-4" />
-                      <span>Mis Pedidos</span>
+                      <Heart className="w-4 h-4 text-rose-500" />
+                      <span>Mis Favoritos</span>
                     </Link>
 
                     <div className="pt-1 border-t border-gray-100">

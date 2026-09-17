@@ -33,7 +33,26 @@ export class InventoryService {
         variant: {
           include: {
             product: {
-              select: { id: true, name: true, slug: true, brand: true },
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                brand: true,
+                weight: true,
+                description: true,
+                images: { take: 1, select: { url: true } },
+                productCategories: {
+                  include: {
+                    category: {
+                      select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                      },
+                    },
+                  },
+                },
+              },
             },
             prices: { where: { isActive: true }, take: 1 },
           },
@@ -44,7 +63,16 @@ export class InventoryService {
     let items = inventoryItems.map((item) => ({
       id: item.id.toString(),
       variantId: item.variantId.toString(),
-      product: item.variant.product,
+      product: {
+        id: item.variant.product.id.toString(),
+        name: item.variant.product.name,
+        slug: item.variant.product.slug,
+        brand: item.variant.product.brand,
+        weight: item.variant.product.weight ? Number(item.variant.product.weight) : null,
+        description: item.variant.product.description,
+        imageUrl: item.variant.product.images?.[0]?.url || null,
+        category: item.variant.product.productCategories?.[0]?.category?.name || 'Accesorios',
+      },
       sku: item.variant.sku,
       variantName: item.variant.name,
       price: item.variant.prices[0] ? Number(item.variant.prices[0].price) : 0,
@@ -52,7 +80,7 @@ export class InventoryService {
       reservedStock: item.reservedStock,
       totalStock: item.availableStock + item.reservedStock,
       minimumStock: item.minimumStock,
-      isLowStock: item.availableStock < item.minimumStock,
+      isLowStock: item.availableStock > 0 && item.availableStock <= item.minimumStock,
       isOutOfStock: item.availableStock === 0,
       updatedAt: item.updatedAt,
     }));
@@ -109,7 +137,15 @@ export class InventoryService {
       include: {
         variant: {
           include: {
-            product: { select: { name: true, slug: true } },
+            product: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                brand: true,
+                images: { take: 1, select: { url: true } },
+              },
+            },
           },
         },
         user: { select: { firstName: true, lastName: true, email: true } },
@@ -121,7 +157,13 @@ export class InventoryService {
     return movements.map((m) => ({
       id: m.id.toString(),
       variantId: m.variantId.toString(),
-      product: m.variant.product,
+      product: {
+        id: m.variant.product.id.toString(),
+        name: m.variant.product.name,
+        slug: m.variant.product.slug,
+        brand: m.variant.product.brand,
+        imageUrl: m.variant.product.images?.[0]?.url || null,
+      },
       sku: m.variant.sku,
       variantName: m.variant.name,
       movementType: m.movementType,

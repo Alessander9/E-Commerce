@@ -93,7 +93,7 @@ async function main() {
     create: {
       name: 'PeruCat',
       slug: 'cleo',
-      domain: 'perucat.pe',
+      domain: 'cleo.local',
       subdomain: 'cleo',
       description: 'Marca especializada en arena sanitaria para gatos: alta absorción, aglomeración y control de olores. Antes Capsufet.',
       logoUrl: '/IMG/perucat-clasica.jpg',

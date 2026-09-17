@@ -92,6 +92,9 @@ export interface Product {
   brand?: string;
   hasVariants: boolean;
   featured: boolean;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
   images: Array<{
     id: string;
     url: string;

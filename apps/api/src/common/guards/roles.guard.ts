@@ -29,13 +29,24 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('User is not authenticated');
     }
 
-    // 1. Check user roles in current tenant or across all active memberships if global/no tenant context
-    const userRoles = user.userTenants
-      .filter((ut) => {
-        if (!currentTenant) return ut.active;
-        return ut.tenantId === currentTenant.id && ut.active;
+    const activeMemberships = (user.userTenants || []).filter((ut: any) => ut.active);
+
+    // 1. Super Admin with PLATFORM scope has global authority
+    const isPlatformSuperAdmin = activeMemberships.some(
+      (ut: any) => ut.role?.name === 'SUPER_ADMIN' || ut.role?.scope === 'PLATFORM',
+    );
+
+    if (isPlatformSuperAdmin) {
+      return true;
+    }
+
+    // 2. Check user roles in current tenant (or across active memberships if no tenant context)
+    const userRoles = activeMemberships
+      .filter((ut: any) => {
+        if (!currentTenant) return true;
+        return ut.tenantId === currentTenant.id;
       })
-      .map((ut) => ut.role.name);
+      .map((ut: any) => ut.role.name);
 
     const hasRequiredRole = requiredRoles.some((role) =>
       userRoles.includes(role),

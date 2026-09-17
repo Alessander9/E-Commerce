@@ -5,12 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -25,14 +27,24 @@ export class AuthGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
 
     try {
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET || 'cleo-platform-super-secure-jwt-secret-key-2026',
+      const secret =
+        this.configService.get<string>('JWT_SECRET') ||
+        process.env.JWT_SECRET ||
+        'cleo-platform-super-secure-jwt-secret-key-2026';
+
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret,
       });
+
+      if (!payload || !payload.sub) {
+        throw new UnauthorizedException('Invalid token payload');
+      }
 
       const user = await this.prisma.user.findUnique({
         where: { id: BigInt(payload.sub) },
         include: {
           userTenants: {
+            where: { active: true },
             include: {
               role: true,
               tenant: true,
@@ -41,14 +53,18 @@ export class AuthGuard implements CanActivate {
         },
       });
 
-      if (!user || !user.active) {
-        throw new UnauthorizedException('User not found or disabled');
+      if (!user || !user.active || user.deletedAt !== null) {
+        throw new UnauthorizedException('User account is inactive or deleted');
       }
 
       request.user = user;
+      request.jwtPayload = payload;
       return true;
-    } catch (err) {
-      throw new UnauthorizedException('Invalid or expired token');
+    } catch (err: any) {
+      if (err instanceof UnauthorizedException) {
+        throw err;
+      }
+      throw new UnauthorizedException('Invalid or expired authentication token');
     }
   }
 }

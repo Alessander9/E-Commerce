@@ -242,11 +242,24 @@ export class OrdersService {
     return this.prisma.order.findMany({
       where: { tenantId },
       include: {
-        user: { select: { id: true, firstName: true, lastName: true, email: true } },
-        items: true,
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        items: {
+          include: {
+            product: {
+              include: { images: true },
+            },
+            variant: true,
+          },
+        },
         shippingAddress: true,
         payments: true,
-        shipment: true,
+        shipment: {
+          include: { tracking: { orderBy: { createdAt: 'desc' } } },
+        },
+        statusHistory: {
+          include: { user: { select: { firstName: true, lastName: true, email: true } } },
+          orderBy: { createdAt: 'desc' },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

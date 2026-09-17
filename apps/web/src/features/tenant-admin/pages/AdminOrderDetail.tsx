@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
+import {
+  SlidersHorizontal,
+  MessageCircle,
+  Check,
+  RefreshCw,
+  X,
+  Truck,
+  FileText,
+  Clock,
+  ArrowLeft,
+  CheckCircle2,
+} from 'lucide-react';
 
 interface OrderItem {
   id: string;
@@ -289,49 +301,89 @@ export const AdminOrderDetail: React.FC = () => {
 
       {/* Status Change Modal */}
       {showStatusModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Cambiar Estado del Pedido</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nuevo Estado</label>
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2"
-                >
-                  <option value={order.status}>{getLabel(order.status)} (actual)</option>
-                  {allowedStatuses.map((s) => (
-                    <option key={s} value={s}>{getLabel(s)}</option>
-                  ))}
-                </select>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 border border-slate-100">
+            
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#4F46E5] flex items-center justify-center font-bold">
+                  <SlidersHorizontal className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900">
+                    Cambiar Estado
+                  </h3>
+                  <span className="text-xs text-slate-400">
+                    Pedido #{order.orderNumber}
+                  </span>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
-                <textarea
-                  value={statusNotes}
-                  onChange={(e) => setStatusNotes(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2"
-                  rows={3}
-                  placeholder="Ej: Cliente confirmó recepción..."
-                />
+              <button
+                onClick={() => setShowStatusModal(false)}
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-700 block">
+                  Nuevo Estado del Pedido <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <SlidersHorizontal className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-slate-900 font-bold focus:border-[#4F46E5] focus:outline-none cursor-pointer shadow-2xs"
+                  >
+                    <option value={order.status}>{getLabel(order.status)} (actual)</option>
+                    {allowedStatuses.map((s) => (
+                      <option key={s} value={s}>{getLabel(s)}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="flex justify-end gap-3">
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-700 block">
+                  Notas de la actualización (opcional)
+                </label>
+                <div className="relative">
+                  <MessageCircle className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
+                  <textarea
+                    value={statusNotes}
+                    onChange={(e) => setStatusNotes(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-slate-900 font-medium focus:border-[#4F46E5] focus:outline-none shadow-2xs resize-none"
+                    rows={3}
+                    placeholder="Ej: Cliente confirmó recepción del paquete..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                 <button
                   onClick={() => setShowStatusModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold cursor-pointer transition-all"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleStatusChange}
                   disabled={updating || selectedStatus === order.status}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-2xl bg-[#4F46E5] hover:bg-[#4338CA] text-white font-black shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50"
                 >
-                  {updating ? 'Actualizando...' : 'Actualizar'}
+                  {updating ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Check className="w-4 h-4" />
+                  )}
+                  <span>{updating ? 'Actualizando...' : 'Actualizar Estado'}</span>
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       )}

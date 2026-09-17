@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   MessageCircle,
   X,
@@ -17,9 +18,32 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
   phoneNumber = '51987654321',
   defaultMessage = 'Hola PeruCat, quisiera recibir asesoría y conocer las ofertas en arenas sanitarias.',
 }) => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [showAutoPopup, setShowAutoPopup] = useState(false);
+
+  // Check if current route is an auth page (Login, Register, Forgot/Reset Password)
+  const isAuthRoute =
+    location.pathname.startsWith('/login') ||
+    location.pathname.startsWith('/register') ||
+    location.pathname.startsWith('/forgot-password') ||
+    location.pathname.startsWith('/reset-password');
+
+  // Check if current route is a dashboard (Customer, Tenant Admin, Platform Admin)
+  const isDashboardRoute =
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/platform') ||
+    location.pathname.startsWith('/mis-pedidos') ||
+    location.pathname.startsWith('/pedidos') ||
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/favoritos') ||
+    location.pathname.startsWith('/perfil');
+
+  // Do not render at all on auth pages (neither desktop nor mobile)
+  if (isAuthRoute) {
+    return null;
+  }
 
   // Automatically show a friendly greeting badge after 3 seconds on first visit
   useEffect(() => {
@@ -56,7 +80,9 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end"
+      className={`fixed bottom-6 right-6 z-50 flex-col items-end ${
+        isDashboardRoute ? 'hidden lg:flex' : 'flex'
+      }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

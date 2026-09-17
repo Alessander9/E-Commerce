@@ -199,6 +199,9 @@ model Product {
   @@unique([tenantId, slug])
   @@unique([tenantId, baseSku])
   @@index([tenantId])
+  @@index([tenantId, active])
+  @@index([tenantId, createdAt])
+  @@index([tenantId, brand])
   @@map("products")
 }
 
@@ -330,6 +333,7 @@ model ProductPrice {
   variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   @@index([variantId])
+  @@index([variantId, isActive])
   @@map("product_prices")
 }
 
@@ -370,6 +374,8 @@ model InventoryMovement {
 
   @@index([tenantId])
   @@index([variantId])
+  @@index([tenantId, createdAt])
+  @@index([variantId, createdAt])
   @@map("inventory_movements")
 }
 
@@ -408,6 +414,7 @@ model CartItem {
   variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
   @@unique([cartId, variantId])
+  @@index([variantId])
   @@map("cart_items")
 }
 
@@ -474,6 +481,9 @@ model Order {
   @@index([tenantId])
   @@index([userId])
   @@index([status])
+  @@index([tenantId, createdAt])
+  @@index([tenantId, status])
+  @@index([userId, createdAt])
   @@map("orders")
 }
 
@@ -510,6 +520,8 @@ model OrderItem {
   variant ProductVariant @relation(fields: [variantId], references: [id])
 
   @@index([orderId])
+  @@index([variantId])
+  @@index([productId])
   @@map("order_items")
 }
 
@@ -551,6 +563,8 @@ model Payment {
   webhooks PaymentWebhook[]
 
   @@index([orderId])
+  @@index([transactionId])
+  @@index([status])
   @@map("payments")
 }
 
@@ -708,6 +722,8 @@ model Notification {
 
   @@index([tenantId])
   @@index([userId])
+  @@index([userId, status])
+  @@index([tenantId, createdAt])
   @@map("notifications")
 }
 
@@ -729,6 +745,8 @@ model AuditLog {
 
   @@index([tenantId])
   @@index([entity, entityId])
+  @@index([tenantId, createdAt])
+  @@index([userId])
   @@map("audit_logs")
 }
 

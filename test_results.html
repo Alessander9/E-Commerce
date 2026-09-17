@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeruCat - Super Test Report Selenium E2E</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6 sm:p-10">
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-8 rounded-3xl border border-indigo-900/50 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <div>
+                <div className="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-black uppercase tracking-wider border border-indigo-500/30">
+                        Selenium E2E & Backend Suite
+                    </span>
+                </div>
+                <h1 class="text-3xl font-black text-white mt-2">Informe de Super Test de Calidad</h1>
+                <p class="text-slate-400 text-sm mt-1">Pruebas automatizadas de Frontend, Backend, Roles, Botones y Responsiveness Móvil</p>
+            </div>
+
+            <div class="bg-slate-900/90 p-5 rounded-2xl border border-slate-800 text-center min-w-[160px]">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Tasa de Éxito</span>
+                <span class="text-4xl font-black text-emerald-400 block mt-1">100%</span>
+                <span class="text-[11px] text-slate-500 block mt-0.5">20 de 20 pruebas exitosas</span>
+            </div>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80">
+                <span class="text-xs font-bold text-slate-400 block">Total Pruebas Ejecutadas</span>
+                <span class="text-2xl font-black text-white mt-1 block">20</span>
+            </div>
+            <div class="bg-emerald-950/30 p-5 rounded-2xl border border-emerald-900/40">
+                <span class="text-xs font-bold text-emerald-400 block">Pruebas Aprobadas</span>
+                <span class="text-2xl font-black text-emerald-400 mt-1 block">20</span>
+            </div>
+            <div class="bg-rose-950/20 p-5 rounded-2xl border border-rose-900/30">
+                <span class="text-xs font-bold text-rose-400 block">Pruebas Fallidas</span>
+                <span class="text-2xl font-black text-rose-400 mt-1 block">0</span>
+            </div>
+        </div>
+
+        <!-- Table Results -->
+        <div class="bg-slate-900/80 rounded-3xl border border-slate-800/80 overflow-hidden shadow-xl">
+            <div class="p-5 border-b border-slate-800 flex justify-between items-center">
+                <h3 class="font-extrabold text-base text-white">Detalle de Pruebas por Módulo</h3>
+                <span class="text-xs text-slate-400 font-mono">2026-09-17 18:09:41</span>
+            </div>
+            <div class="divide-y divide-slate-800/60 text-xs">
+    
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">BACKEND_CORE</span>
+                            <span class="font-bold text-slate-200 text-sm">Backend API Server Liveness</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Running on http://localhost:3001</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:00</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">BACKEND_CATALOG</span>
+                            <span class="font-bold text-slate-200 text-sm">Public Catalog Products API</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">DB Endpoint disponible</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:00</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">BACKEND_AUTH</span>
+                            <span class="font-bold text-slate-200 text-sm">Auth Login API - Rol CUSTOMER</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Auth endpoint verificado</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:00</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">BACKEND_AUTH</span>
+                            <span class="font-bold text-slate-200 text-sm">Auth Login API - Rol TENANT_ADMIN</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Admin auth verificado</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:01</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_STOREFRONT</span>
+                            <span class="font-bold text-slate-200 text-sm">Carga de Storefront Principal</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Título: PeruCat | Arena Sanitaria Aglomerante para Gatos Perú - Alta Absorción y Control de Olores</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:04</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_STOREFRONT</span>
+                            <span class="font-bold text-slate-200 text-sm">Elementos Interactivos Storefront</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">22 botones, 44 enlaces detectados</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:04</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_ADMIN_DASHBOARD</span>
+                            <span class="font-bold text-slate-200 text-sm">Botones Interactivos Dashboard Admin</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">11 botones interactivos activos</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:08</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_ADMIN_INVENTORY</span>
+                            <span class="font-bold text-slate-200 text-sm">Vista de Inventario & Almacén</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">11 controles de stock y filtros activos</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:15</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_ADMIN_COUPONS</span>
+                            <span class="font-bold text-slate-200 text-sm">Gestión de Cupones & Promociones</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Módulo de cupones con formulario y listado visual</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:16</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">FRONTEND_CUSTOMER_PORTAL</span>
+                            <span class="font-bold text-slate-200 text-sm">Portal Cliente - Navegación Lateral (Sidebar)</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">0 pestañas operativas (Inicio, Pedidos, Direcciones, Datos, Gatitos, etc.)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:18</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Storefront Home Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:24</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Catálogo de Productos Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:26</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Dashboard Comprador / Cliente Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 500px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:28</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Lista de Deseos Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 500px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:29</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Pantalla de Login Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:31</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Dashboard Administrador Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:33</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Gestión de Productos Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:34</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Gestión de Pedidos Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:36</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Inventario & Stock Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:38</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-800/30 transition-colors">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono text-[10px] font-bold">MOBILE_RESPONSIVE_CHECK</span>
+                            <span class="font-bold text-slate-200 text-sm">Responsiveness: Configuración de Tienda Móvil</span>
+                        </div>
+                        <p class="text-slate-400 text-xs pl-0.5">Ancho contenido: 490px / Viewport: 500px (Sin desborde horizontal)</p>
+                    </div>
+                    <div class="flex items-center gap-3 self-start sm:self-center">
+                        <span class="text-slate-500 font-mono text-[11px]">18:09:39</span>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-black border border-emerald-500/30">✓ PASSED</span>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+
+        <div class="text-center text-xs text-slate-500 py-4">
+            PeruCat E-Commerce Suite © 2026 · Selenium Test Framework
+        </div>
+    </div>
+</body>
+</html>
+    

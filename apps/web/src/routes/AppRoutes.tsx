@@ -80,6 +80,22 @@ export const AppRoutes: React.FC = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="mi-cuenta"
+          element={
+            <ProtectedRoute minRoleLevel={1}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="portal-cliente"
+          element={
+            <ProtectedRoute minRoleLevel={1}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />

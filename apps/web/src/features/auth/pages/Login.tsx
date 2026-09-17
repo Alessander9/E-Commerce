@@ -56,8 +56,11 @@ export const Login: React.FC = () => {
         res.user.currentRole === 'TENANT_MANAGER'
       ) {
         navigate('/admin');
+      } else if (res.user.currentRole === 'PLATFORM_SUPER_ADMIN') {
+        navigate('/platform');
       } else {
-        navigate(redirect);
+        // For customer / pet parent, redirect to their customer dashboard / orders portal if default redirect
+        navigate(redirect && redirect !== '/' ? redirect : '/mis-pedidos');
       }
     } catch (err: any) {
       setError(err.message || 'Credenciales inválidas. Verifica tu correo y contraseña.');
@@ -183,11 +186,11 @@ export const Login: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-white">Nivel 1: Cliente / Pet Parent</p>
-                      <p className="text-[10px] text-gray-400">Catálogo, compras y seguimiento</p>
+                      <p className="text-[10px] text-gray-400">Portal de compras, pedidos y seguimiento</p>
                     </div>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                    Tienda
+                    /mis-pedidos
                   </span>
                 </button>
               </div>
